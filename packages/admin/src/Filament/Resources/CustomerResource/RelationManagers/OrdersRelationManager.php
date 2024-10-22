@@ -5,8 +5,8 @@ namespace Lunar\Admin\Filament\Resources\CustomerResource\RelationManagers;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Lunar\Admin\Filament\Resources\OrderResource;
-use Lunar\Admin\Support\RelationManagers\BaseRelationManager;
 use Lunar\Admin\Filament\Resources\OrderResource\Pages\ManageOrder;
+use Lunar\Admin\Support\RelationManagers\BaseRelationManager;
 use Lunar\Models\Order;
 
 class OrdersRelationManager extends BaseRelationManager
