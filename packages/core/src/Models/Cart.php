@@ -434,14 +434,6 @@ class Cart extends BaseModel implements Contracts\Cart
      */
     public function associate(LunarUser $user, string $policy = 'merge', bool $refresh = true): Cart
     {
-        if ($this->customer()->exists()) {
-            if (! $user->query()
-                ->whereHas('customers', fn ($query) => $query->where('customer_id', $this->customer->id))
-                ->exists()) {
-                throw new Exception('Invalid user');
-            }
-        }
-
         return app(
             config('lunar.cart.actions.associate_user', AssociateUser::class)
         )->execute($this, $user, $policy)
