@@ -794,7 +794,7 @@ test('can apply percentage discount', function () {
     $cart = Cart::factory()->create([
         'channel_id' => $channel->id,
         'currency_id' => $currency->id,
-        'coupon_code' => '10PERCENTOFF',
+        'coupon_code' => '10PT5PERCENTOFF',
     ]);
 
     $purchasable = ProductVariant::factory()->create();
@@ -816,9 +816,9 @@ test('can apply percentage discount', function () {
     $discount = Discount::factory()->create([
         'type' => AmountOff::class,
         'name' => 'Test Coupon',
-        'coupon' => '10PERCENTOFF',
+        'coupon' => '10PT5PERCENTOFF',
         'data' => [
-            'percentage' => 10,
+            'percentage' => 10.5,
             'fixed_value' => false,
         ],
     ]);
@@ -843,9 +843,9 @@ test('can apply percentage discount', function () {
 
     $cart = $cart->calculate();
 
-    expect($cart->discountTotal->value)->toEqual(100);
-    expect($cart->taxTotal->value)->toEqual(180);
-    expect($cart->total->value)->toEqual(1080);
+    expect($cart->discountTotal->value)->toEqual(105);
+    expect($cart->taxTotal->value)->toEqual(179);
+    expect($cart->total->value)->toEqual(1074);
 
     $cart->lines()->delete();
 
@@ -857,9 +857,9 @@ test('can apply percentage discount', function () {
 
     $cart = $cart->refresh()->calculate();
 
-    expect($cart->discountTotal->value)->toEqual(200);
-    expect($cart->taxTotal->value)->toEqual(360);
-    expect($cart->total->value)->toEqual(2160);
+    expect($cart->discountTotal->value)->toEqual(210);
+    expect($cart->taxTotal->value)->toEqual(358);
+    expect($cart->total->value)->toEqual(2148);
 });
 
 test('can only same discount to line once', function () {
