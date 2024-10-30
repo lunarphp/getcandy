@@ -784,7 +784,16 @@ test('fixed amount discount distributes across cart lines', function () {
     expect($lastLine->discountTotal->value)->toEqual(333);
 });
 
-test('can apply percentage discount', function () {
+test('can apply percentage discount', function (
+    string $coupon,
+    float $percentage,
+    int $discountTotalForOne,
+    int $taxTotalForOne,
+    int $totalForOne,
+    int $discountTotalForTwo,
+    int $taxTotalForTwo,
+    int $totalForTwo
+) {
     $customerGroup = CustomerGroup::getDefault();
 
     $channel = Channel::getDefault();
@@ -794,7 +803,7 @@ test('can apply percentage discount', function () {
     $cart = Cart::factory()->create([
         'channel_id' => $channel->id,
         'currency_id' => $currency->id,
-        'coupon_code' => '10PT5PERCENTOFF',
+        'coupon_code' => $coupon,
     ]);
 
     $purchasable = ProductVariant::factory()->create();
@@ -816,9 +825,9 @@ test('can apply percentage discount', function () {
     $discount = Discount::factory()->create([
         'type' => AmountOff::class,
         'name' => 'Test Coupon',
-        'coupon' => '10PT5PERCENTOFF',
+        'coupon' => $coupon,
         'data' => [
-            'percentage' => 10.5,
+            'percentage' => $percentage,
             'fixed_value' => false,
         ],
     ]);
@@ -843,9 +852,9 @@ test('can apply percentage discount', function () {
 
     $cart = $cart->calculate();
 
-    expect($cart->discountTotal->value)->toEqual(105);
-    expect($cart->taxTotal->value)->toEqual(179);
-    expect($cart->total->value)->toEqual(1074);
+    expect($cart->discountTotal->value)->toEqual($discountTotalForOne);
+    expect($cart->taxTotal->value)->toEqual($taxTotalForOne);
+    expect($cart->total->value)->toEqual($totalForOne);
 
     $cart->lines()->delete();
 
@@ -857,10 +866,14 @@ test('can apply percentage discount', function () {
 
     $cart = $cart->refresh()->calculate();
 
-    expect($cart->discountTotal->value)->toEqual(210);
-    expect($cart->taxTotal->value)->toEqual(358);
-    expect($cart->total->value)->toEqual(2148);
-});
+    expect($cart->discountTotal->value)->toEqual($discountTotalForTwo);
+    expect($cart->taxTotal->value)->toEqual($taxTotalForTwo);
+    expect($cart->total->value)->toEqual($totalForTwo);
+})->with([
+    '10% Discount' => ['10PERCENTOFF', 10, 100, 180, 1080, 200, 360, 2160],
+    '10.25% Discount' => ['10PT25PERCENTOFF', 10.25, 103, 179, 1076, 205, 359, 2154],
+    '10.5% Discount' => ['10PT5PERCENTOFF', 10.5, 105, 179, 1074, 210, 358, 2148],
+]);
 
 test('can only same discount to line once', function () {
     $customerGroup = CustomerGroup::getDefault();
