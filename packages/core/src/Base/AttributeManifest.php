@@ -11,6 +11,7 @@ use Lunar\Models\Customer;
 use Lunar\Models\CustomerGroup;
 use Lunar\Models\Product;
 use Lunar\Models\ProductVariant;
+use Lunar\Models\Price;
 
 class AttributeManifest
 {
@@ -28,6 +29,7 @@ class AttributeManifest
         Customer::class,
         Brand::class,
         CustomerGroup::class,
+        Price::class,
         // Order::class,
     ];
 
