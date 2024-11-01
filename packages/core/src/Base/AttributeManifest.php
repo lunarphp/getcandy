@@ -9,9 +9,9 @@ use Lunar\Models\Brand;
 use Lunar\Models\Collection as ModelsCollection;
 use Lunar\Models\Customer;
 use Lunar\Models\CustomerGroup;
+use Lunar\Models\Price;
 use Lunar\Models\Product;
 use Lunar\Models\ProductVariant;
-use Lunar\Models\Price;
 
 class AttributeManifest
 {

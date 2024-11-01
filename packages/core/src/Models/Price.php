@@ -7,10 +7,10 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 use Illuminate\Database\Eloquent\Relations\MorphToMany;
 use Lunar\Base\BaseModel;
-use Lunar\Base\Casts\Price as CastsPrice;
 use Lunar\Base\Casts\AsAttributeData;
-use Lunar\Base\Traits\HasMacros;
+use Lunar\Base\Casts\Price as CastsPrice;
 use Lunar\Base\Traits\HasAttributes;
+use Lunar\Base\Traits\HasMacros;
 use Lunar\Database\Factories\PriceFactory;
 use Spatie\LaravelBlink\BlinkFacade as Blink;
 
