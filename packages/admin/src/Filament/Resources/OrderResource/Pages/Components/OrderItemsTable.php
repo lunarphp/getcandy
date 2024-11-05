@@ -102,12 +102,14 @@ class OrderItemsTable extends TableComponent
 
                             $states = [];
 
-                            foreach($record->meta as $key => $value) {
-                                $states[$key] = $value;
+                            if ($record->meta) {
+                                foreach ($record->meta as $key => $value) {
+                                    $states[$key] = $value;
+                                }
                             }
 
-                            return $states;;
-                        })
+                            return $states;
+                        }),
                 ]),
             ])
                 ->collapsed()
