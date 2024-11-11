@@ -722,6 +722,7 @@ Lunar\Models\Product::create([
     'product_type_id' => $productType->id,
     'status' => 'published',
     'brand_id' => $brandId,
+    'sku' => 'DRBOOT',
     'attribute_data' => [
         'name' => new TranslatedText(collect([
             'en' => new Text('1460 PATENT LEATHER BOOTS'),
