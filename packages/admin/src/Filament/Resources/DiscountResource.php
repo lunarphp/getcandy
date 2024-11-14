@@ -361,7 +361,8 @@ class DiscountResource extends BaseResource
                     \Lunar\Models\Discount::SCHEDULED => 'info',
                 }),
             Tables\Columns\TextColumn::make('name')
-                ->label(__('lunarpanel::discount.table.name.label')),
+                ->label(__('lunarpanel::discount.table.name.label'))
+                ->searchable(),
             Tables\Columns\TextColumn::make('type')
                 ->formatStateUsing(function ($state) {
                     return (new $state)->getName();
