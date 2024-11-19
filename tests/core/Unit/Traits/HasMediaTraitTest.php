@@ -14,7 +14,7 @@ test('conversions are loaded', function () {
 
     expect($definitions)->toHaveCount(6);
 
-    expect($definitions[Product::class])->toEqual(StandardMediaDefinitions::class);
+    expect($definitions['product'])->toEqual(StandardMediaDefinitions::class);
 
     $file = UploadedFile::fake()->image('avatar.jpg');
 
@@ -32,7 +32,7 @@ test('conversions are loaded', function () {
 
 test('custom conversions are loaded', function () {
     Config::set('lunar.media.definitions', [
-        Product::class => TestStandardMediaDefinitions::class,
+        'product' => TestStandardMediaDefinitions::class,
     ]);
 
     $product = invade(new Product);
@@ -47,7 +47,7 @@ test('custom conversions are loaded for extended model', function () {
     );
 
     Config::set('lunar.media.definitions', [
-        Product::class => TestStandardMediaDefinitions::class,
+        'product' => TestStandardMediaDefinitions::class,
     ]);
 
     $product = invade(app(\Lunar\Models\Contracts\Product::class));
