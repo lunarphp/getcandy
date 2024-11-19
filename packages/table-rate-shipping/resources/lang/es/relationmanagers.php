@@ -3,7 +3,7 @@
 return [
     'shipping_methods' => [
         'customer_groups' => [
-            'description' => "Asocia grupos de clientes a este método de envío para determinar su disponibilidad.",
+            'description' => 'Asocia grupos de clientes a este método de envío para determinar su disponibilidad.',
         ],
     ],
     'shipping_rates' => [
