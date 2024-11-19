@@ -113,7 +113,7 @@ return [
             'label' => 'Cantidad',
 
             'hint' => [
-                'less_than_total' => "Está a punto de capturar un monto menor al valor total de la transacción",
+                'less_than_total' => 'Está a punto de capturar un monto menor al valor total de la transacción',
             ],
         ],
 
