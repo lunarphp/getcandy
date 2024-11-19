@@ -64,7 +64,6 @@ class Attributes extends Forms\Components\Group
                     })
                     ->filter(fn ($group) => count($group['fields']));
 
-
                 $groupComponents = [];
 
                 foreach ($groups as $group) {
