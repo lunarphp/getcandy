@@ -5,6 +5,7 @@ namespace Lunar\Admin\Filament\Resources\CustomerResource\RelationManagers;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Lunar\Admin\Filament\Resources\OrderResource;
+use Lunar\Admin\Filament\Resources\OrderResource\Pages\ManageOrder;
 use Lunar\Admin\Support\RelationManagers\BaseRelationManager;
 use Lunar\Models\Order;
 
@@ -18,7 +19,7 @@ class OrdersRelationManager extends BaseRelationManager
             OrderResource::getTableColumns()
         )->actions([
             Tables\Actions\Action::make('viewOrder')
-                ->url(fn (Order $record): string => route('filament.lunar.resources.orders.order', $record)),
+                ->url(fn (Order $record): string => ManageOrder::getUrl(['record' => $record])),
         ]);
     }
 }
