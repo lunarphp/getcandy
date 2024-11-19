@@ -224,7 +224,7 @@ class AmountOff extends AbstractDiscountType
     /**
      * Apply the percentage to the cart line.
      */
-    private function applyPercentage(int $value, Cart $cart): Cart
+    private function applyPercentage(float $value, Cart $cart): Cart
     {
         $lines = $this->getEligibleLines($cart);
 
