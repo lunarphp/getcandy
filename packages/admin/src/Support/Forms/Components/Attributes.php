@@ -61,7 +61,8 @@ class Attributes extends Forms\Components\Group
                             'model' => $group,
                             'fields' => $attributes->groupBy('attribute_group_id')->get($group->id, []),
                         ];
-                    });
+                    })
+                    ->filter(fn ($group) => count($group['fields']));
 
                 $groupComponents = [];
 
@@ -86,7 +87,7 @@ class Attributes extends Forms\Components\Group
             }
 
             foreach ($state as $key => $value) {
-                if (! $value instanceof \Lunar\Base\Fieldtype) {
+                if (! $value instanceof \Lunar\Base\FieldType) {
                     continue;
                 }
 
