@@ -3,8 +3,9 @@
 namespace Lunar\Shipping\Resolvers;
 
 use Illuminate\Support\Collection;
+use Lunar\Shipping\Interfaces\PostcodeResolverInterface;
 
-class PostcodeResolver
+class PostcodeResolver implements PostcodeResolverInterface
 {
     public function getParts($postcode): Collection
     {
