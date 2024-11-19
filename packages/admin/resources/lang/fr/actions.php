@@ -1,4 +1,5 @@
 <?php
+
 return [
     'collections' => [
         'create_root' => [
