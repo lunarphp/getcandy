@@ -19,8 +19,8 @@ trait HasChannels
             $channels = Channel::get()->mapWithKeys(function ($channel) {
                 return [
                     $channel->id => [
-                        'enabled' => false,
-                        'starts_at' => null,
+                        'enabled' => $channel->default,
+                        'starts_at' => $channel->default ? now() : null,
                         'ends_at' => null,
                     ],
                 ];
@@ -50,7 +50,7 @@ trait HasChannels
         ])->withTimestamps();
     }
 
-    public function scheduleChannel($channel, DateTime $startsAt = null, DateTime $endsAt = null)
+    public function scheduleChannel($channel, ?DateTime $startsAt = null, ?DateTime $endsAt = null)
     {
         if ($channel instanceof Model) {
             $channel = collect([$channel]);
@@ -91,10 +91,9 @@ trait HasChannels
      * Apply the channel scope to the query
      *
      * @param  Builder  $query
-     * @param  Channel|iterable  $channel
      * @return Builder
      */
-    public function scopeChannel($query, Channel|iterable $channel = null, DateTime $startsAt = null, DateTime $endsAt = null)
+    public function scopeChannel($query, Channel|iterable|null $channel = null, ?DateTime $startsAt = null, ?DateTime $endsAt = null)
     {
         if (blank($channel)) {
             return $query;

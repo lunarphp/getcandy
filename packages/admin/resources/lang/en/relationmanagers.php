@@ -28,7 +28,7 @@ return [
             ],
         ],
         'table' => [
-            'description' => 'Associate customer groups to this product to determine it\'s availability.',
+            'description' => 'Associate customer groups to this :type to determine it\'s availability.',
             'name' => [
                 'label' => 'Name',
             ],
@@ -82,6 +82,43 @@ return [
             ],
             'ends_at' => [
                 'label' => 'End Date',
+            ],
+        ],
+    ],
+    'medias' => [
+        'title' => 'Media',
+        'title_plural' => 'Media',
+        'actions' => [
+            'create' => [
+                'label' => 'Create Media',
+            ],
+            'view' => [
+                'label' => 'View',
+            ],
+        ],
+        'form' => [
+            'name' => [
+                'label' => 'Name',
+            ],
+            'media' => [
+                'label' => 'Image',
+            ],
+            'primary' => [
+                'label' => 'Primary',
+            ],
+        ],
+        'table' => [
+            'image' => [
+                'label' => 'Image',
+            ],
+            'file' => [
+                'label' => 'File',
+            ],
+            'name' => [
+                'label' => 'Name',
+            ],
+            'primary' => [
+                'label' => 'Primary',
             ],
         ],
     ],
@@ -208,6 +245,17 @@ return [
                     ],
                 ],
                 'tooltip' => 'Automatically generated based on currency exchange rates.',
+            ],
+        ],
+    ],
+    'tax_rate_amounts' => [
+        'table' => [
+            'description' => '',
+            'percentage' => [
+                'label' => 'Percentage',
+            ],
+            'tax_class' => [
+                'label' => 'Tax Class',
             ],
         ],
     ],

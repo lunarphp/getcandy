@@ -18,7 +18,133 @@ php artisan migrate
 
 Lunar currently provides bug fixes and security updates for only the latest minor release, e.g. `0.8`.
 
-## 1.0.0-alpha.x
+## 1.0.0-beta.1
+
+### High Impact
+
+#### Model Extending
+
+Model extending has been completely rewritten and will require changes to your Laravel app if you have previously extended Lunar models.
+
+The biggest difference is now Lunar models implement a contract (interface) and support dependency injection across your storefront and the Lunar panel.
+
+You will need to update how you register models in Lunar.
+
+##### Old
+```php
+    ModelManifest::register(collect([
+        Product::class => \App\Models\Product::class,
+        // ...
+    ]));
+```
+
+##### New
+```php
+ModelManifest::replace(
+    \Lunar\Models\Contracts\Product::class,
+    \App\Models\Product::class
+);
+```
+
+::: tip
+If your models are not extending their Lunar counterpart, you must implement the relevant contract in `Lunar\Models\Contracts`
+:::
+
+Look at the [model extending](/core/extending/models) section for all available functionality.
+
+#### Polymorphic relationships
+
+In order to support model extending better, all polymorphic relationships now use an alias instead of the fully qualified class name, this allows relationships to resolve to your custom model when interacting with Eloquent.
+
+There is an additional config setting in `config/lunar/database.php`, where you can set whether these polymorph mappings should be prefixed in Lunar's context.
+
+```php
+'morph_prefix' => null,
+```
+
+By default, this is set as `null` so the mapping for a product would just be `product`.
+
+There is a migration which will handle this change over for Lunar tables and some third party tables, however you may need to add your own migrations to other tables or to switch any custom models you may have.
+
+#### Shipping methods availability
+
+Shipping methods are now associated to Customer Groups. If you are using the shipping addon then you should ensure that all your shipping methods are associated to the correct customer groups.
+
+#### Stripe Addon
+
+The Stripe addon will now attempt to update an order's billing and shipping address based on what has been stored against the Payment Intent. This is due to Stripe not always returning this information during their express checkout flows. This can be disabled by setting the `lunar.stripe.sync_addresses` config value to `false`.
+
+##### PaymentIntent storage and reference to carts/orders
+Currently, PaymentIntent information is stored in the Cart model's meta, which is then transferred to the order when created.
+
+Whilst this works okay it causes for limitations and also means that if the carts meta is ever updated elsewhere, or the intent information is removed, then it will cause unrecoverable loss.
+
+We have now looked to move away from the payment_intent key in the meta to a StripePaymentIntent model, this allows us more flexibility in how payment intents are handled and reacted on. A StripePaymentIntent will be associated to both a cart and an order.
+
+The information we store is now:
+
+- `intent_id` - This is the PaymentIntent ID which is provided by Stripe
+- `status` - The PaymentIntent status
+- `event_id` - If the PaymentIntent was placed via the webhook, this will be populated with the ID of that event
+- `processing_at` - When a request to place the order is made, this is populated
+- `processed_at` - Once the order is placed, this will be populated with the current timestamp
+
+##### Preventing overlap
+Currently, we delay sending the job to place the order to the queue by 20 seconds, this is less than ideal, now the payment type will check whether we are already processing this order and if so, not do anything further. This should prevent overlaps regardless of how they are triggered.
+
+## 1.0.0-alpha.34
+
+### Medium Impact
+
+#### Stripe Addon
+
+The Stripe driver will now check whether an order has a value for `placed_at` against an order and if so, no further processing will take place.
+
+Additionally, the logic in the webhook has been moved to the job queue, which is dispatched with a delay of 20 seconds, this is to allow storefronts to manually process a payment intent, in addition to the webhook, without having to worry about overlap.
+
+The Stripe webhook ENV entry has been changed from `STRIPE_WEBHOOK_PAYMENT_INTENT` to `LUNAR_STRIPE_WEBHOOK_SECRET`.
+
+The stripe config Lunar looks for in `config/services.php` has changed and should now look like:
+
+```php
+'stripe' => [
+    'key' => env('STRIPE_SECRET'),
+    'public_key' => env('STRIPE_PK'),
+    'webhooks' => [
+        'lunar' => env('LUNAR_STRIPE_WEBHOOK_SECRET'),
+    ],
+],
+```
+
+## 1.0.0-alpha.32
+
+### High Impact
+
+There is now a new `LunarUser` interface you will need to implement on your `User` model.
+
+```php
+// ...
+class User extends Authenticatable implements \Lunar\Base\LunarUser
+{
+    use \Lunar\Base\Traits\LunarUser;
+}
+```
+
+## 1.0.0-alpha.31
+
+### High Impact
+
+Certain parts of `config/cart.php` which are more specific to when you are interacting with carts via the session have been relocated to a new `config/cart_session.php` file.
+
+```php
+// Move to config/cart_session.php
+'session_key' => 'lunar_cart',
+'auto_create' => false,
+```
+
+You should also check this file for any new config values you may need to add.
+
+## 1.0.0-alpha.29
 
 ### High Impact
 
@@ -33,7 +159,22 @@ To allow for recalculation we have now introduced `$cart->recalculate()` to forc
 Collection Group now have unique index on the column `handle`.
 If you are creating Collection Group from the admin panel, there is no changes required.
 
-## [Unreleased]
+### Medium Impact
+
+#### Update custom shipping modifiers signature
+
+The `\Lunar\Base\ShippingModifier` `handle` method now correctly passes a closure as the second parameter. You will need to update any custom shipping modifiers that extend this as follows:
+
+```php
+public function handle(\Lunar\Models\Cart $cart, \Closure $next)
+{
+    //..
+    
+    return $next($cart);
+}
+```
+
+## 1.0.0-alpha.26
 
 ### Medium Impact
 
@@ -52,6 +193,17 @@ $variant->purchasable == 'backorder';
 // New
 $variant->purchasable == 'in_stock_or_on_backorder';
 
+```
+
+## 1.0.0-alpha.22
+
+### Medium Impact
+
+Carts now use soft deletes and a cart will be deleted when `CartSession::forget()` is called.
+If you don't want to delete the cart when you call `forget` you can pass `delete: false` as a parameter:
+
+```php
+\Lunar\Facades\CartSession::forget(delete: false);
 ```
 
 ## 1.0.0-alpha.20

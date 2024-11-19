@@ -7,7 +7,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Lunar\Base\Traits\LunarUser;
 
-class User extends Authenticatable
+class User extends Authenticatable implements \Lunar\Base\LunarUser
 {
     use HasFactory;
     use LunarUser;
@@ -46,7 +46,7 @@ class User extends Authenticatable
     /**
      * Return a new factory instance for the model.
      */
-    protected static function newFactory(): UserFactory
+    protected static function newFactory()
     {
         return UserFactory::new();
     }

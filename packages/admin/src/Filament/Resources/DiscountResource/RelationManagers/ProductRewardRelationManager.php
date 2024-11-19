@@ -3,13 +3,13 @@
 namespace Lunar\Admin\Filament\Resources\DiscountResource\RelationManagers;
 
 use Filament\Forms;
-use Filament\Resources\RelationManagers\RelationManager;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Model;
+use Lunar\Admin\Support\RelationManagers\BaseRelationManager;
 use Lunar\Models\Product;
 
-class ProductRewardRelationManager extends RelationManager
+class ProductRewardRelationManager extends BaseRelationManager
 {
     protected static bool $isLazy = false;
 
@@ -25,7 +25,7 @@ class ProductRewardRelationManager extends RelationManager
         return false;
     }
 
-    public function table(Table $table): Table
+    public function getDefaultTable(Table $table): Table
     {
 
         return $table
@@ -49,7 +49,7 @@ class ProductRewardRelationManager extends RelationManager
                             Forms\Components\MorphToSelect\Type::make(Product::class)
                                 ->titleAttribute('name.en')
                                 ->getSearchResultsUsing(static function (Forms\Components\Select $component, string $search): array {
-                                    return Product::search($search)
+                                    return get_search_builder(Product::class, $search)
                                         ->get()
                                         ->mapWithKeys(fn (Product $record): array => [$record->getKey() => $record->attr('name')])
                                         ->all();

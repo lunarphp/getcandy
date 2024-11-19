@@ -47,7 +47,7 @@ Lunar\Models\CartLine
 |:-----------------|:---------------------------------------------|
 | id               |                                              |
 | cart_id          |                                              |
-| purchasable_type | e.g. `Lunar\Models\ProductVariant`.          |
+| purchasable_type | e.g. `product_variant`                       |
 | purchasable_id   |                                              |
 | quantity         |                                              |
 | created_at       |                                              |
@@ -55,10 +55,11 @@ Lunar\Models\CartLine
 | meta             | JSON data for saving any custom information. |
 
 ```php
+$purchasable = \Lunar\Models\ProductVariant::create([/** ... */]);
 $cartLine = new \Lunar\Models\CartLine([
     'cart_id' => 1,
-    'purchasable_type' => ProductVariant::class,
-    'purchasable_id' => 123,
+    'purchasable_type' => $purchasable->getMorphClass(),
+    'purchasable_id' => $purchasable->id,
     'quantity' => 2,
     'meta' => [
         'personalization' => 'Love you mum xxx',
@@ -67,6 +68,20 @@ $cartLine = new \Lunar\Models\CartLine([
 
 // Or you can use the relationship on the cart.
 $cart->lines()->create([/* .. */]);
+```
+
+### Validation
+
+When adding items to a cart there are a series of validation actions which are run, which are defined in the `config/lunar/cart.php` config file.
+
+These actions will throw a `Lunar\Exceptions\Carts\CartException`.
+
+```php
+try {
+    $cart->add($purchasable, 500);
+} catch (\Lunar\Exceptions\Carts\CartException $e) {
+    $error = $e->getMessage();
+}
 ```
 
 Now you have a basic Cart up and running, it's time to show you how you would
@@ -113,15 +128,6 @@ foreach ($cart->shippingBreakdown->items as $shippingBreakdown) {
     $shippingBreakdown->price->formatted();
 }
     
-
-foreach ($cart->discountBreakdown as $discountBreakdown) {
-    $discountBreakdown->discount_id
-    foreach ($discountBreakdown->lines as $discountLine) {
-        $discountLine->quantity
-        $discountLine->line
-    }
-    $discountBreakdown->total->value
-}
 
 foreach ($cart->discountBreakdown as $discountBreakdown) {
     $discountBreakdown->discount_id
@@ -220,10 +226,16 @@ Configuration for your cart is handled in `lunar/cart.php`
 
 | Field         | Description                                                                            | Default      |
 |:--------------|:---------------------------------------------------------------------------------------|:-------------|
-| `session_key` | What key to use when storing the cart id in the session                                | `lunar_cart` |
-| `auto_create` | If no current basket exists, should we create one in the database?                     | `false`      |
 | `auth_policy` | When a user logs in, how should we handle merging of the basket?                       | `merge`      |
 | `eager_load`  | Which relationships should be eager loaded by default when calculating the cart totals |
+
+There is additional, separate, config specifically for when using the `CartSession` located in `lunar/cart_session.php`.
+
+| Field                            | Description                                                        | Default      |
+|:---------------------------------|:-------------------------------------------------------------------|:-------------|
+| `session_key`                    | What key to use when storing the cart id in the session            | `lunar_cart` |
+| `auto_create`                    | If no current basket exists, should we create one in the database? | `false`      |
+| `allow_multiple_orders_per_cart` | Whether carts can have multiple orders associated to them.         | `false`      |
 
 ### Getting the cart session instance
 
@@ -249,13 +261,22 @@ When you call current, you have two options, you either return `null` if they
 don't have a cart, or you want to create one straight away. By default, we do
 not create them initially as this could lead to a ton of cart models being
 created for no good reason. If you want to enable this functionality, you can
-adjust the config in `lunar/cart.php`
+adjust the config in `lunar/cart_session.php`
 
 ### Forgetting the cart
+Forgetting the cart will remove it from the user session and also soft-delete 
+the cart in the database.
 
 ```php
 CartSession::forget();
 ```
+
+If you don't want to delete the cart, you can pass the following parameter.
+
+```php
+CartSession::forget(delete: false);
+```
+
 
 ### Using a specific cart
 

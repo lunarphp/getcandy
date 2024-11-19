@@ -71,7 +71,7 @@ it('can render order manage page', function () {
         $tax = (int) ($subTotal * .2);
         $options = $variant->values->map(fn ($value) => $value->translate('name'));
 
-        $itemTax = (new TaxBreakdown());
+        $itemTax = (new TaxBreakdown);
         $itemTax->addAmount(new TaxBreakdownAmount(
             price: new Price(
                 value: $tax,
@@ -84,7 +84,7 @@ it('can render order manage page', function () {
 
         $lines->push([
             'quantity' => $quantity,
-            'purchasable_type' => $variant::class,
+            'purchasable_type' => $variant->getMorphClass(),
             'purchasable_id' => $variant->id,
             'type' => 'physical',
             'description' => $variant->product->translateAttribute('name'),

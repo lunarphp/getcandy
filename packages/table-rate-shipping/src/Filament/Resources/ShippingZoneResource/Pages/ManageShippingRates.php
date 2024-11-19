@@ -57,6 +57,7 @@ class ManageShippingRates extends ManageRelatedRecords
                 ->label(
                     __('lunarpanel.shipping::relationmanagers.shipping_rates.form.shipping_method_id.label')
                 )
+                ->required()
                 ->relationship(name: 'shippingMethod', titleAttribute: 'name')
                 ->columnSpan(2),
             Forms\Components\TextInput::make('price')
@@ -66,7 +67,7 @@ class ManageShippingRates extends ManageRelatedRecords
                 ->numeric()
                 ->required()
                 ->columnSpan(2)
-                ->afterStateHydrated(static function (Forms\Components\TextInput $component, Model $record = null): void {
+                ->afterStateHydrated(static function (Forms\Components\TextInput $component, ?Model $record = null): void {
                     if ($record) {
                         $basePrice = $record->basePrices->first();
 
@@ -110,7 +111,7 @@ class ManageShippingRates extends ManageRelatedRecords
                         ->numeric()
                         ->required(),
                 ])->afterStateHydrated(
-                    static function (Forms\Components\Repeater $component, Model $record = null): void {
+                    static function (Forms\Components\Repeater $component, ?Model $record = null): void {
                         if ($record) {
                             $component->state(
                                 $record->priceBreaks->map(function ($price) {
@@ -147,31 +148,32 @@ class ManageShippingRates extends ManageRelatedRecords
         ])->headerActions([
             Tables\Actions\CreateAction::make()->label(
                 __('lunarpanel.shipping::relationmanagers.shipping_rates.actions.create.label')
-            )->action(function (Table $table, ShippingRate $shippingRate = null, array $data = []) {
+            )->action(function (Table $table, ?ShippingRate $shippingRate = null, array $data = []) {
                 $relationship = $table->getRelationship();
 
-                $record = new ShippingRate();
+                $record = new ShippingRate;
                 $record->shipping_method_id = $data['shipping_method_id'];
                 $relationship->save($record);
 
                 static::saveShippingRate($record, $data);
             })->slideOver(),
         ])->actions([
+
             Tables\Actions\EditAction::make()->slideOver()->action(function (ShippingRate $shippingRate, array $data) {
                 static::saveShippingRate($shippingRate, $data);
             }),
-
+            Tables\Actions\DeleteAction::make()->requiresConfirmation(),
         ]);
     }
 
-    protected static function saveShippingRate(ShippingRate $shippingRate = null, array $data = []): void
+    protected static function saveShippingRate(?ShippingRate $shippingRate = null, array $data = []): void
     {
         $currency = Currency::getDefault();
 
         $basePrice = $shippingRate->basePrices->first() ?: new Price;
 
         $basePrice->price = (int) ($data['price'] * $currency->factor);
-        $basePrice->priceable_type = get_class($shippingRate);
+        $basePrice->priceable_type = $shippingRate->getMorphClass();
         $basePrice->currency_id = $currency->id;
         $basePrice->priceable_id = $shippingRate->id;
         $basePrice->customer_group_id = null;
@@ -179,9 +181,14 @@ class ManageShippingRates extends ManageRelatedRecords
 
         $shippingRate->priceBreaks()->delete();
 
+        $currencies = Currency::all();
         $tiers = collect($data['prices'] ?? [])->map(
-            function ($price) {
-                $price['min_quantity'] = $price['min_quantity'] * 100;
+            function ($price) use ($currencies) {
+                $currency = $currencies->first(fn ($currency) => $currency->id == $price['currency_id']);
+
+                $price['min_quantity'] = (int) ($price['min_quantity'] * $currency->factor);
+
+                $price['price'] = (int) ($price['price'] * $currency->factor);
 
                 return $price;
             }
