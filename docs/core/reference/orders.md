@@ -17,7 +17,7 @@ Lunar\Models\Order
 | cart_id               | The related cart                                                                                                   |
 | channel_id            | Which channel this was purchased through                                                                           |
 | status                | A status that makes sense to you as the store owner                                                                |
-| reference             | Your stores own reference                                                                                          
+| reference             | Your store's own reference                                                                                          
 | customer_reference    | If you want customers to add their own reference, it goes here.                                                    
 | sub_total             | The sub total minus any discounts, excl. tax                                                                       
 | discount_breakdown    | A json field for the discount breakdown e.g. `[{"discount_id": 1, "lines": [{"id": 1, "qty": 1}]], "total": 200}]` 
@@ -196,11 +196,11 @@ You can find out more in the Extending Lunar section for [Order Modifiers](/core
 Lunar\Models\OrderLine
 ```
 
-| Field            | Description                                                                                 |
-|:-----------------|:--------------------------------------------------------------------------------------------|
-| id               |                                                                                             |
-| order_id         |                                                                                             |
-| purchasable_type | Class reference for the purchasable item e.g. `Lunar\Models\ProductVariant`                 |
+| Field            | Description                                                                                                                                      |
+|:-----------------|:-------------------------------------------------------------------------------------------------------------------------------------------------|
+| id               |                                                                                                                                                  |
+| order_id         |                                                                                                                                                  |
+| purchasable_type | Morph reference for the purchasable item e.g. `product_variant`                                                                                  |
 | purchasable_id   |
 | type             | Whether `digital`,`physical` etc                                                            
 | description      | A description of the line item                                                              

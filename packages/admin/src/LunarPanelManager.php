@@ -8,6 +8,7 @@ use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\NavigationGroup;
 use Filament\Panel;
+use Filament\Support\Assets\Css;
 use Filament\Support\Colors\Color;
 use Filament\Support\Facades\FilamentColor;
 use Filament\Support\Facades\FilamentIcon;
@@ -62,6 +63,7 @@ class LunarPanelManager
         Resources\TagResource::class,
         Resources\TaxClassResource::class,
         Resources\TaxZoneResource::class,
+        Resources\TaxRateResource::class,
     ];
 
     protected static $pages = [
@@ -217,11 +219,18 @@ class LunarPanelManager
             ])
             ->font('Poppins')
             ->middleware($panelMiddleware)
+            ->assets([
+                Css::make('lunar-panel', __DIR__.'/../resources/dist/lunar-panel.css'),
+            ], 'lunarphp/panel')
             ->pages(
                 static::getPages()
             )
             ->resources(
                 static::getResources()
+            )
+            ->discoverClusters(
+                in: realpath(__DIR__.'/Filament/Clusters'),
+                for: 'Lunar\Admin\Filament\Clusters'
             )
             ->widgets(
                 static::getWidgets()
@@ -286,11 +295,12 @@ class LunarPanelManager
         return $this;
     }
 
-    public function callHook(string $class, string $hookName, ...$args): mixed
+    public function callHook(string $class, ?object $caller, string $hookName, ...$args): mixed
     {
         if (isset($this->extensions[$class])) {
             foreach ($this->extensions[$class] as $extension) {
                 if (method_exists($extension, $hookName)) {
+                    $extension->setCaller($caller);
                     $args[0] = $extension->{$hookName}(...$args);
                 }
             }

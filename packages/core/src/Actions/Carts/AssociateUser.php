@@ -2,8 +2,8 @@
 
 namespace Lunar\Actions\Carts;
 
-use Illuminate\Foundation\Auth\User;
 use Lunar\Actions\AbstractAction;
+use Lunar\Base\LunarUser;
 use Lunar\Models\Cart;
 
 class AssociateUser extends AbstractAction
@@ -13,12 +13,12 @@ class AssociateUser extends AbstractAction
      *
      * @param  string  $policy
      */
-    public function execute(Cart $cart, User $user, $policy = 'merge'): self
+    public function execute(Cart $cart, LunarUser $user, $policy = 'merge'): self
     {
         if ($policy == 'merge') {
             $userCart = Cart::whereUserId($user->getKey())->active()->unMerged()->latest()->first();
             if ($userCart) {
-                app(MergeCart::class)->execute($userCart, $cart);
+                app(MergeCart::class)->execute($cart, $userCart);
             }
         }
 

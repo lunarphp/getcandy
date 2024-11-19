@@ -6,6 +6,7 @@ use Cartalyst\Converter\Laravel\Facades\Converter;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Logout;
 use Illuminate\Console\Scheduling\Schedule;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Events\MigrationsEnded;
 use Illuminate\Database\Events\MigrationsStarted;
 use Illuminate\Database\Events\NoPendingMigrations;
@@ -92,7 +93,9 @@ class LunarServiceProvider extends ServiceProvider
 {
     protected $configFiles = [
         'cart',
+        'cart_session',
         'database',
+        'discounts',
         'media',
         'orders',
         'payments',
@@ -119,15 +122,15 @@ class LunarServiceProvider extends ServiceProvider
         $this->registerAddonManifest();
 
         $this->app->singleton(CartModifiers::class, function () {
-            return new CartModifiers();
+            return new CartModifiers;
         });
 
         $this->app->singleton(CartLineModifiers::class, function () {
-            return new CartLineModifiers();
+            return new CartLineModifiers;
         });
 
         $this->app->singleton(OrderModifiers::class, function () {
-            return new OrderModifiers();
+            return new OrderModifiers;
         });
 
         $this->app->singleton(CartSessionInterface::class, function ($app) {
@@ -139,7 +142,7 @@ class LunarServiceProvider extends ServiceProvider
         });
 
         $this->app->singleton(ShippingModifiers::class, function ($app) {
-            return new ShippingModifiers();
+            return new ShippingModifiers;
         });
 
         $this->app->singleton(ShippingManifestInterface::class, function ($app) {
@@ -177,6 +180,8 @@ class LunarServiceProvider extends ServiceProvider
         $this->app->singleton(DiscountManagerInterface::class, function ($app) {
             return $app->make(DiscountManager::class);
         });
+
+        \Lunar\Facades\ModelManifest::register();
     }
 
     /**
@@ -189,8 +194,11 @@ class LunarServiceProvider extends ServiceProvider
         }
 
         $this->registerObservers();
+        $this->registerBuilderMacros();
         $this->registerBlueprintMacros();
         $this->registerStateListeners();
+
+        \Lunar\Facades\ModelManifest::morphMap();
 
         if ($this->app->runningInConsole()) {
             collect($this->configFiles)->each(function ($config) {
@@ -249,7 +257,7 @@ class LunarServiceProvider extends ServiceProvider
     protected function registerAddonManifest()
     {
         $this->app->instance(Manifest::class, new Manifest(
-            new Filesystem(),
+            new Filesystem,
             $this->app->basePath(),
             $this->app->bootstrapPath().'/cache/lunar_addons.php'
         ));
@@ -308,6 +316,35 @@ class LunarServiceProvider extends ServiceProvider
         }
     }
 
+    protected function registerBuilderMacros(): void
+    {
+        Builder::macro('orderBySequence', function (array $ids) {
+            /** @var Builder $this */
+            $driver = $this->getConnection()->getDriverName();
+
+            if (empty($ids)) {
+                return $this;
+            }
+
+            if ($driver === 'mysql') {
+                $placeholders = implode(',', array_fill(0, count($ids), '?'));
+
+                return $this->orderByRaw("FIELD(id, {$placeholders})", $ids);
+            }
+
+            if ($driver === 'pgsql') {
+                $orderCases = '';
+                foreach ($ids as $index => $id) {
+                    $orderCases .= "WHEN id = $id THEN $index ";
+                }
+
+                return $this->orderByRaw("CASE $orderCases ELSE ".count($ids).' END');
+            }
+
+            return $this;
+        });
+    }
+
     /**
      * Register the blueprint macros.
      */
@@ -339,7 +376,7 @@ class LunarServiceProvider extends ServiceProvider
                 $this->foreignUuId($field_name)
                     ->nullable($nullable)
                     ->constrained(
-                        (new $userModel())->getTable()
+                        (new $userModel)->getTable()
                     );
             } elseif ($type == 'int') {
                 $this->unsignedInteger($field_name)->nullable($nullable);
@@ -348,7 +385,7 @@ class LunarServiceProvider extends ServiceProvider
                 $this->foreignId($field_name)
                     ->nullable($nullable)
                     ->constrained(
-                        (new $userModel())->getTable()
+                        (new $userModel)->getTable()
                     );
             }
         });

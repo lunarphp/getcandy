@@ -57,6 +57,7 @@ class ManageShippingRates extends ManageRelatedRecords
                 ->label(
                     __('lunarpanel.shipping::relationmanagers.shipping_rates.form.shipping_method_id.label')
                 )
+                ->required()
                 ->relationship(name: 'shippingMethod', titleAttribute: 'name')
                 ->columnSpan(2),
             Forms\Components\TextInput::make('price')
@@ -150,17 +151,18 @@ class ManageShippingRates extends ManageRelatedRecords
             )->action(function (Table $table, ?ShippingRate $shippingRate = null, array $data = []) {
                 $relationship = $table->getRelationship();
 
-                $record = new ShippingRate();
+                $record = new ShippingRate;
                 $record->shipping_method_id = $data['shipping_method_id'];
                 $relationship->save($record);
 
                 static::saveShippingRate($record, $data);
             })->slideOver(),
         ])->actions([
+
             Tables\Actions\EditAction::make()->slideOver()->action(function (ShippingRate $shippingRate, array $data) {
                 static::saveShippingRate($shippingRate, $data);
             }),
-
+            Tables\Actions\DeleteAction::make()->requiresConfirmation(),
         ]);
     }
 
@@ -171,7 +173,7 @@ class ManageShippingRates extends ManageRelatedRecords
         $basePrice = $shippingRate->basePrices->first() ?: new Price;
 
         $basePrice->price = (int) ($data['price'] * $currency->factor);
-        $basePrice->priceable_type = get_class($shippingRate);
+        $basePrice->priceable_type = $shippingRate->getMorphClass();
         $basePrice->currency_id = $currency->id;
         $basePrice->priceable_id = $shippingRate->id;
         $basePrice->customer_group_id = null;
@@ -179,9 +181,14 @@ class ManageShippingRates extends ManageRelatedRecords
 
         $shippingRate->priceBreaks()->delete();
 
+        $currencies = Currency::all();
         $tiers = collect($data['prices'] ?? [])->map(
-            function ($price) {
-                $price['min_quantity'] = $price['min_quantity'] * 100;
+            function ($price) use ($currencies) {
+                $currency = $currencies->first(fn ($currency) => $currency->id == $price['currency_id']);
+
+                $price['min_quantity'] = (int) ($price['min_quantity'] * $currency->factor);
+
+                $price['price'] = (int) ($price['price'] * $currency->factor);
 
                 return $price;
             }
