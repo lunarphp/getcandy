@@ -1,12 +1,15 @@
 <?php
 
-uses(\Lunar\Tests\Shipping\TestCase::class);
+uses(\Lunar\Tests\Shipping\TestCase::class)
+    ->group('shipping', 'shipping-zone');
 
+use Illuminate\Support\Facades\Config;
 use Lunar\Models\Country;
 use Lunar\Models\State;
 use Lunar\Shipping\DataTransferObjects\PostcodeLookup;
 use Lunar\Shipping\Models\ShippingZone;
 use Lunar\Shipping\Resolvers\ShippingZoneResolver;
+use Lunar\Tests\Shipping\Stubs\Resolvers\TestCustomPostcodeResolver;
 
 uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
 
@@ -109,3 +112,45 @@ test('can fetch zone by postcode lookup', function () {
 
     expect($zones->first()->id)->toEqual($shippingZone->id);
 });
+
+test('can use custom postcode resolver', function () {
+    $country = Country::factory()->create();
+
+    $shippingZone = ShippingZone::factory()->create([
+        'type' => 'postcodes',
+    ]);
+
+    $shippingZone->countries()->attach($country);
+
+    $shippingZone->postcodes()->createMany([[
+        'postcode' => '390*',
+    ], [
+        'postcode' => '391*',
+    ]]);
+
+    $shippingZone2 = ShippingZone::factory()->create([
+        'type' => 'postcodes',
+    ]);
+
+    $shippingZone2->countries()->attach($country);
+
+    $shippingZone2->postcodes()->create([
+        'postcode' => '393*',
+    ]);
+
+    expect($shippingZone->refresh()->countries)->toHaveCount(1);
+    expect($shippingZone->refresh()->postcodes)->toHaveCount(2);
+
+    $postcode = new PostcodeLookup(
+        $country,
+        '39100'
+    );
+
+    Config::set('lunar.shipping-tables.resolvers.postcode', TestCustomPostcodeResolver::class);
+
+    $zones = (new ShippingZoneResolver)->postcode($postcode)->get();
+
+    expect($zones)->toHaveCount(1);
+
+    expect($zones->first()->id)->toEqual($shippingZone->id);
+})->group('shipping-postcode');
