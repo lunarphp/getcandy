@@ -113,7 +113,7 @@ return [
             'label' => 'Bedrag',
 
             'hint' => [
-                'less_than_total' => "Je staat op het punt een bedrag te incasseren dat minder is dan de totale transactiewaarde",
+                'less_than_total' => 'Je staat op het punt een bedrag te incasseren dat minder is dan de totale transactiewaarde',
             ],
         ],
 
@@ -290,4 +290,3 @@ return [
     ],
 
 ];
-
