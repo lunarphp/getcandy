@@ -96,10 +96,10 @@ class ShippingZoneResolver
             }
 
             if ($this->postcodeLookup) {
-                $postcodeResolver = config('lunar.shipping-tables.resolvers.postcode', PostcodeResolver::class);
+                $builder->orWhere(function ($qb) {
+                    $qb->whereHas('postcodes', function ($query) {
+                        $postcodeResolver = config('lunar.shipping-tables.resolvers.postcode', PostcodeResolver::class);
 
-                $builder->orWhere(function ($qb) use ($postcodeResolver) {
-                    $qb->whereHas('postcodes', function ($query) use ($postcodeResolver) {
                         $postcodeParts = (new $postcodeResolver)->getParts(
                             $this->postcodeLookup->postcode
                         );
