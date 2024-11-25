@@ -32,4 +32,3 @@ test('can search staff by name', function () {
         ->and(\Lunar\Admin\Models\Staff::search('Bill')->get())->toHaveCount(1)
         ->and(\Lunar\Admin\Models\Staff::search('Joe Bloggs')->get())->toHaveCount(1);
 });
-
