@@ -10,7 +10,6 @@ return new class extends Migration
     {
         Schema::table($this->prefix.'staff', function (Blueprint $table) {
             $table->renameColumn('firstname', 'first_name');
-            $table->renameColumn('lastname', 'last_name');
         });
     }
 
@@ -18,7 +17,6 @@ return new class extends Migration
     {
         Schema::table($this->prefix.'staff', function (Blueprint $table) {
             $table->renameColumn('first_name', 'firstname');
-            $table->renameColumn('last_name', 'lastname');
         });
     }
 };
