@@ -13,7 +13,7 @@ See the docs at https://lunar-panel.vercel.app/
 - [ ] Tax Zone types are "country", "states", "postcodes" -> would prefer it to be "countries" so it's consistent
 - [ ] `ListField` FieldType shouldn't really have "Field" in its name -> change to simply "List"
 - [ ] Sometimes we use "Enabled" other times "Active". Do we want to consider consistency here also?
-- [ ] Staff "firstname" "lastname" I think should have underscores, e.g. "first_name"
+- [x] Staff "firstname" "lastname" I think should have underscores, e.g. "first_name"
 - [x] How to allow devs to extend Lunar's forms and tables
 - [x] How to allow devs to overide validation rules
 - [x] Allow devs to extend by adding their own pages/resources

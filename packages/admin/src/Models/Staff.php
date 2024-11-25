@@ -17,8 +17,8 @@ use Spatie\Permission\Traits\HasRoles;
 /**
  * @property int $id
  * @property bool $admin
- * @property string $firstname
- * @property string $lastname
+ * @property string $first_name
+ * @property string $last_name
  * @property string $full_name
  * @property string $email
  * @property string $password
@@ -40,8 +40,8 @@ class Staff extends Authenticatable implements FilamentUser, HasName
     protected $guard_name = 'staff';
 
     protected $fillable = [
-        'firstname',
-        'lastname',
+        'first_name',
+        'last_name',
         'admin',
         'email',
         'password',
@@ -65,7 +65,7 @@ class Staff extends Authenticatable implements FilamentUser, HasName
     protected function fullName(): Attribute
     {
         return Attribute::get(
-            fn (): string => "{$this->firstname} {$this->lastname}",
+            fn (): string => "{$this->first_name} {$this->last_name}",
         );
     }
 
@@ -92,7 +92,7 @@ class Staff extends Authenticatable implements FilamentUser, HasName
         }
 
         foreach (explode(' ', $terms) as $term) {
-            $query->whereAny(['email', 'firstname', 'lastname'], 'LIKE', "%{$term}%");
+            $query->whereAny(['email', 'first_name', 'last_name'], 'LIKE', "%{$term}%");
         }
     }
 
