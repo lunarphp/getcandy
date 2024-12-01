@@ -7,7 +7,7 @@ use Lunar\Models\Discount;
 class DiscountObserver
 {
     /**
-     * Handle the ProductVariant "deleted" event.
+     * Handle the Discount "deleting" event.
      *
      * @return void
      */
