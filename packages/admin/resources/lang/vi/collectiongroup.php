@@ -4,7 +4,7 @@ return [
 
     'label' => 'Nhóm bộ sưu tập',
 
-    'plural_label' => 'Các nhóm bộ sưu tập',
+    'plural_label' => 'Nhóm bộ sưu tập',
 
     'table' => [
         'name' => [

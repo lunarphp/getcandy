@@ -4,7 +4,7 @@ return [
 
     'label' => 'Kênh',
 
-    'plural_label' => 'Các kênh',
+    'plural_label' => 'Kênh',
 
     'table' => [
         'name' => [

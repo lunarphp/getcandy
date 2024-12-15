@@ -2,7 +2,7 @@
 
 return [
     'label' => 'Khu vực vận chuyển',
-    'label_plural' => 'Các khu vực vận chuyển',
+    'label_plural' => 'Khu vực vận chuyển',
     'form' => [
         'unrestricted' => [
             'content' => 'Khu vực vận chuyển này không có hạn chế và sẽ khả dụng cho tất cả khách hàng khi thanh toán.',
