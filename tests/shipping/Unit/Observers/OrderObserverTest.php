@@ -3,7 +3,8 @@
 use Lunar\Models\Order;
 use Lunar\Shipping\Observers\OrderObserver;
 
-uses(\Lunar\Tests\Shipping\TestCase::class);
+uses(\Lunar\Tests\Shipping\TestCase::class)
+    ->group('shipping', 'shipping-order');
 uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
 uses(\Lunar\Tests\Shipping\TestUtils::class);
 

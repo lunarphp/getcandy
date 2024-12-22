@@ -1,6 +1,7 @@
 <?php
 
-uses(\Lunar\Tests\Shipping\TestCase::class);
+uses(\Lunar\Tests\Shipping\TestCase::class)
+    ->group('shipping', 'shipping-manager');
 
 use Lunar\Models\CartAddress;
 use Lunar\Models\Country;

@@ -1,6 +1,7 @@
 <?php
 
-uses(\Lunar\Tests\Shipping\TestCase::class);
+uses(\Lunar\Tests\Shipping\TestCase::class)
+    ->group('shipping', 'shipping-driver', 'shipping-driver-collection');
 
 use Lunar\DataTypes\ShippingOption;
 use Lunar\Models\Currency;
