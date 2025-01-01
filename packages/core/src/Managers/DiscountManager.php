@@ -123,7 +123,7 @@ class DiscountManager implements DiscountManagerInterface
         }
 
         if ($this->customerGroups->isEmpty()) {
-            if ($customerGroups = $cart->customer?->customerGroups) {
+            if ($cart && $customerGroups = $cart->customer?->customerGroups) {
                 $this->customerGroup($customerGroups);
             } elseif ($defaultGroup = CustomerGroup::getDefault()) {
                 $this->customerGroup($defaultGroup);
