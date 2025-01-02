@@ -20,12 +20,12 @@ class Tags extends TagsInput
                 return;
             }
 
-            $state = $record->tags
+            $state = $record->load('tags')->tags
                 ->pluck('value')
                 ->map(function (string $value) {
                     return Str::upper($value);
                 })->all();
-
+            
             $component->state($state);
         });
 
