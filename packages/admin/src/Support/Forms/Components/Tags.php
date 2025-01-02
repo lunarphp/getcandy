@@ -25,7 +25,7 @@ class Tags extends TagsInput
                 ->map(function (string $value) {
                     return Str::upper($value);
                 })->all();
-            
+
             $component->state($state);
         });
 
