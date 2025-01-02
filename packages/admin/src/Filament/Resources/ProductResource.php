@@ -99,7 +99,7 @@ class ProductResource extends BaseResource
     public static function getDefaultForm(Form $form): Form
     {
         return $form
-            ->schema([
+            ->schema(fn (Product $record) => [
                 Shout::make('product-status')
                     ->content(
                         __('lunarpanel::product.status.unpublished.content')
@@ -123,6 +123,19 @@ class ProductResource extends BaseResource
                         static::getMainFormComponents(),
                     ),
                 static::getAttributeDataFormComponent(),
+                ...(
+                    $record->variants->count() === 1 ?
+                    [Forms\Components\Repeater::make('variants')
+                        ->relationship()
+                        ->schema([
+                            Attributes::make()->statePath('attribute_data')
+                        ])
+                        ->maxItems(1)
+                        ->addable(false)
+                        ->deletable(false)
+                        ->label('Variant details')] :
+                    []
+                )
             ])
             ->columns(1);
     }
