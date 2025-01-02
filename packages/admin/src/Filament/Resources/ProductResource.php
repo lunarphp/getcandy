@@ -132,7 +132,7 @@ class ProductResource extends BaseResource
                     }
                 })->visible(
                     fn (?Model $record) => $record && $record->variants()->count() == 1
-                )->statePath('variant_attributes')
+                )->statePath('variant_attributes'),
             ])
             ->columns(1);
     }
