@@ -275,7 +275,7 @@ return [
                     'label' => 'Tags',
                     'helper_text' => 'Separate tags by pressing Enter, Tab or comma (,)',
                 ],
-            ]
+            ],
         ],
         'capture_payment' => [
             'label' => 'Capture Payment',
