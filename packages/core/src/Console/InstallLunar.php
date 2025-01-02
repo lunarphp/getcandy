@@ -20,6 +20,7 @@ use Lunar\Models\Product;
 use Lunar\Models\ProductType;
 use Lunar\Models\TaxClass;
 use Lunar\Models\TaxZone;
+
 use function Laravel\Prompts\confirm;
 
 class InstallLunar extends Command
