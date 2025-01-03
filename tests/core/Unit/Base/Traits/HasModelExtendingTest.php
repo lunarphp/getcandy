@@ -77,7 +77,7 @@ test('core model events are triggered with extended models', function () {
     $product->delete();
 
     \Illuminate\Support\Facades\Event::assertDispatched(
-        'eloquent.deleted: ' . Product::class
+        'eloquent.deleted: '.Product::class
     );
 
     \Lunar\Facades\ModelManifest::replace(
@@ -90,6 +90,6 @@ test('core model events are triggered with extended models', function () {
     $product->delete();
 
     \Illuminate\Support\Facades\Event::assertDispatched(
-        'eloquent.deleted: ' . Product::class
+        'eloquent.deleted: '.Product::class
     );
 });

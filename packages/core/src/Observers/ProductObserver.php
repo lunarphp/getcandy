@@ -8,8 +8,6 @@ class ProductObserver
 {
     /**
      * Handle the ProductVariant "deleted" event.
-     *
-     * @return void
      */
     public function deleting(Product $product): void
     {
