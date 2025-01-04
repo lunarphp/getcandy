@@ -134,6 +134,92 @@ it('can render order manage page', function () {
         ->assertSee($this->order->reference);
 });
 
+it('can render order manage page with order line meta', function () {
+    $currency = Currency::getDefault();
+
+    $variants = ProductVariant::factory(5)
+        ->has(ModelsPrice::factory()->state([
+            'currency_id' => $currency->id,
+        ]))->create();
+
+    $lines = collect();
+
+    foreach ($variants as $variant) {
+        $quantity = rand(1, 5);
+
+        $pricing = Pricing::for($variant, $quantity)->get();
+        $price = $pricing->matched->price->value;
+        $subTotal = $price * $quantity;
+        $tax = (int) ($subTotal * .2);
+        $options = $variant->values->map(fn ($value) => $value->translate('name'));
+
+        $itemTax = (new TaxBreakdown);
+        $itemTax->addAmount(new TaxBreakdownAmount(
+            price: new Price(
+                value: $tax,
+                currency: $currency
+            ),
+            identifier: $currency->code,
+            description: 'VAT',
+            percentage: 20,
+        ));
+
+        $lines->push([
+            'quantity' => $quantity,
+            'purchasable_type' => $variant->getMorphClass(),
+            'purchasable_id' => $variant->id,
+            'type' => 'physical',
+            'description' => $variant->product->translateAttribute('name'),
+            'identifier' => $variant->sku,
+            'option' => $options->join(', '),
+            'unit_price' => $price,
+            'unit_quantity' => $variant->unit_quantity,
+            'sub_total' => $subTotal,
+            'discount_total' => 0,
+            'tax_total' => $tax,
+            'total' => $subTotal + $tax,
+            'tax_breakdown' => $itemTax,
+            'meta' => [
+                'line_1' => 'hello',
+            ],
+        ]);
+    }
+
+    $this->order->transactions()->save(Transaction::factory()->create([
+        'driver' => 'offline',
+        'type' => 'capture',
+        'amount' => $lines->sum('total'),
+    ]));
+
+    $lines = $this->order->lines()->createMany($lines->toArray());
+
+    $firstItem = $lines->first();
+    $secondItem = $lines->skip(1)->take(1)->first();
+
+    expect($firstItem)
+        ->not->toBe($secondItem);
+
+    Livewire::test(ManageOrder::class, [
+        'record' => $this->order->getRouteKey(),
+    ])
+        ->assertSuccessful()
+        ->assertSeeLivewire(ActivityLogFeedComponent::class)
+        ->assertSee($this->order->tags)
+        ->assertSee($this->order->shippingAddress->line_one)
+        ->assertSee($this->order->shippingAddress->line_one)
+        ->assertSee($this->order->total->formatted)
+        ->assertSee($this->order->customer->fullName)
+        ->assertSee(CustomerResource::getUrl('edit', ['record' => $this->order->customer->id]))
+        ->assertSee(__('lunarpanel::order.transactions.capture'))
+        ->assertSee($this->order->captures->first()->amount->formatted)
+        ->assertSee($this->order->meta['additional_info'])
+        ->assertSee($firstItem->total->formatted)
+        ->assertSee($firstItem->sub_total->formatted)
+        ->assertSee($secondItem->total->formatted)
+        ->assertSee($this->order->lines->first()->meta['line_1'])
+        ->assertSee($this->order->reference);
+});
+
 it('can download order pdf', function () {
     Livewire::test(ManageOrder::class, [
         'record' => $this->order->getRouteKey(),
