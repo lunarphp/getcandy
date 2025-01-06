@@ -202,7 +202,8 @@ class Cart extends BaseModel implements Contracts\Cart
 
     public function lines(): HasMany
     {
-        return $this->hasMany(CartLine::modelClass(), 'cart_id', 'id');
+        return $this->hasMany(CartLine::modelClass(), 'cart_id', 'id')
+            ->whereHas('purchasable');
     }
 
     public function currency(): BelongsTo
