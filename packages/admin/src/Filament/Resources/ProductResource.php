@@ -123,6 +123,16 @@ class ProductResource extends BaseResource
                         static::getMainFormComponents(),
                     ),
                 static::getAttributeDataFormComponent(),
+                Attributes::make()->using(
+                    ProductVariant::class
+                )->afterStateHydrated(function ($state, ?Model $record, $component) {
+                    $variant = $record->variants->first();
+                    if ($variant) {
+                        $component->state($variant->attribute_data);
+                    }
+                })->visible(
+                    fn (?Model $record) => $record && $record->variants()->count() == 1
+                )->statePath('variant_attributes'),
             ])
             ->columns(1);
     }

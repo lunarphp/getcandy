@@ -14,6 +14,15 @@ use Lunar\Models\ProductVariant;
 
 class Attributes extends Forms\Components\Group
 {
+    public ?string $modelClassOverride = null;
+
+    public function using(string $modelClass): self
+    {
+        $this->modelClassOverride = $modelClass;
+
+        return $this;
+    }
+
     protected function setUp(): void
     {
         parent::setUp();
@@ -22,7 +31,7 @@ class Attributes extends Forms\Components\Group
 
         if (blank($this->childComponents)) {
             $this->schema(function (\Filament\Forms\Get $get, Livewire $livewire, ?Model $record) {
-                $modelClass = $livewire::getResource()::getModel();
+                $modelClass = $this->modelClassOverride ?: $livewire::getResource()::getModel();
 
                 $productTypeId = null;
 
@@ -72,7 +81,6 @@ class Attributes extends Forms\Components\Group
                     foreach ($group['fields'] as $field) {
                         $sectionFields[] = AttributeData::getFilamentComponent($field);
                     }
-
                     $groupComponents[] = Forms\Components\Section::make($group['model']->translate('name'))
                         ->schema($sectionFields);
                 }
