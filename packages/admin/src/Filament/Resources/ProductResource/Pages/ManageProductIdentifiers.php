@@ -94,12 +94,7 @@ class ManageProductIdentifiers extends BaseEditRecord
 
         return $form->schema([
             Section::make()->schema([
-                ProductVariantResource::getSkuFormComponent()
-                    ->live()->unique(
-                        table: fn () => $variant->getTable(),
-                        ignorable: $variant,
-                        ignoreRecord: true,
-                    ),
+                ProductVariantResource::getSkuFormComponent()->live(),
                 ProductVariantResource::getGtinFormComponent(),
                 ProductVariantResource::getMpnFormComponent(),
                 ProductVariantResource::getEanFormComponent(),
