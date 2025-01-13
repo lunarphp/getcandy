@@ -13,8 +13,10 @@ class DiscountObserver
      */
     public function deleting(Discount $discount)
     {
+        $discount->brands()->detach();
         $discount->collections()->detach();
         $discount->customerGroups()->detach();
-        $discount->brands()->detach();
+        $discount->purchasables()->detach();
+        $discount->users()->detach();
     }
 }
