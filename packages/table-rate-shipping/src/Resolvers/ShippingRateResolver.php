@@ -118,7 +118,7 @@ class ShippingRateResolver
     /**
      * Set the value for the postcode.
      */
-    public function postcode(string $postcode): self
+    public function postcode(?string $postcode): self
     {
         $this->postcode = $postcode;
 
