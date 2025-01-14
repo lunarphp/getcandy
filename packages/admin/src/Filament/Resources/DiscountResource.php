@@ -377,13 +377,13 @@ class DiscountResource extends BaseResource
         ];
     }
 
-    public static function getRecordSubNavigation(Page $page): array
+    public static function getDefaultSubNavigation(): array
     {
-        return $page->generateNavigationItems([
+        return [
             Pages\EditDiscount::class,
             Pages\ManageDiscountAvailability::class,
             Pages\ManageDiscountLimitations::class,
-        ]);
+        ];
     }
 
     protected static function getDefaultRelations(): array
