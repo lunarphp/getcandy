@@ -111,7 +111,6 @@ test('can determine correct reward qty', function ($linesQuantity, $minQty, $rew
     ],
 ]);
 
-
 test('can discount eligible product', function () {
     $customerGroup = CustomerGroup::factory()->create([
         'default' => true,
