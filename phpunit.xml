@@ -18,6 +18,9 @@
             <directory suffix="Test.php">tests/opayo/Unit</directory>
             <directory suffix="Test.php">tests/opayo/Feature</directory>
         </testsuite>
+        <testsuite name="search">
+            <directory suffix="Test.php">tests/search/Unit</directory>
+        </testsuite>
         <testsuite name="stripe">
             <directory suffix="Test.php">tests/stripe/Unit</directory>
         </testsuite>
