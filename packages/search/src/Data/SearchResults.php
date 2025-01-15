@@ -2,7 +2,6 @@
 
 namespace Lunar\Search\Data;
 
-use Illuminate\Contracts\Pagination\Paginator;
 use Illuminate\View\View;
 use Spatie\LaravelData\Attributes\DataCollectionOf;
 use Spatie\LaravelData\Attributes\MapName;

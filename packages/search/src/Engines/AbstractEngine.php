@@ -25,7 +25,6 @@ abstract class AbstractEngine
 
     protected string $sortRaw = '';
 
-
     public function extendQuery(\Closure $callable): self
     {
         $this->queryExtenders[] = $callable;
@@ -141,16 +140,16 @@ abstract class AbstractEngine
                 'query' => $this->query,
                 'facets' => array_keys($facets),
                 'facet_filters' => $this->facets,
-            ])
+            ]),
         ];
 
         foreach ($this->facets as $facetField => $facetFilterValues) {
             $queries[] = SearchQuery::from([
-               'query' => $this->query,
-               'facets' => [$facetField],
+                'query' => $this->query,
+                'facets' => [$facetField],
                 'facet_filters' => collect($this->facets)->reject(
                     fn ($value, $field) => $field === $facetField
-                )->toArray()
+                )->toArray(),
             ]);
         }
 
@@ -196,7 +195,7 @@ abstract class AbstractEngine
     {
         return [];
     }
-    
+
     abstract public function get(): mixed;
 
     abstract protected function getFieldConfig(): array;

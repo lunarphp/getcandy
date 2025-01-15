@@ -27,7 +27,7 @@ class MeilisearchEngine extends AbstractEngine
             $completeResults = $response['results'][0];
 
             unset($response['results'][0]);
-            $otherResults =  $response['results'];
+            $otherResults = $response['results'];
 
             $facets = collect($completeResults['facetDistribution'] ?? []);
 
@@ -39,7 +39,7 @@ class MeilisearchEngine extends AbstractEngine
 
             return [
                 ...$completeResults,
-                'facetDistribution' => $facets
+                'facetDistribution' => $facets,
             ];
         });
 
@@ -113,7 +113,7 @@ class MeilisearchEngine extends AbstractEngine
                         'label' => $value,
                         'value' => $value,
                         'count' => $count,
-                        'active' => in_array($value, $this->facets[$field] ?? [])
+                        'active' => in_array($value, $this->facets[$field] ?? []),
                     ])
                 )->values(),
             ])

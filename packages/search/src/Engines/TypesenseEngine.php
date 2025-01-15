@@ -24,7 +24,7 @@ class TypesenseEngine extends AbstractEngine
                 $request = [
                     'searches' => $this->buildSearch(
                         $options
-                    )
+                    ),
                 ];
 
                 $response = $engine->getMultiSearch()->perform($request, [
@@ -33,8 +33,8 @@ class TypesenseEngine extends AbstractEngine
 
                 $completeResults = $response['results'][0];
 
-                unset( $response['results'][0]);
-                $otherResults =  $response['results'];
+                unset($response['results'][0]);
+                $otherResults = $response['results'];
 
                 $facets = collect($completeResults['facet_counts'])->mapWithKeys(
                     fn ($facets) => [$facets['field_name'] => $facets]
@@ -48,10 +48,9 @@ class TypesenseEngine extends AbstractEngine
 
                 return [
                     ...$completeResults,
-                    'facet_counts' => $facets->toArray()
+                    'facet_counts' => $facets->toArray(),
                 ];
             });
-
 
         } catch (\GuzzleHttp\Exception\ConnectException|ServiceUnavailable  $e) {
             Log::error($e->getMessage());
@@ -128,7 +127,6 @@ class TypesenseEngine extends AbstractEngine
         ]);
     }
 
-
     protected function buildSearch(array $options): array
     {
         $searchQueries = $this->getSearchQueries();
@@ -165,9 +163,9 @@ class TypesenseEngine extends AbstractEngine
                     if ($value == 'false' || $value == 'true') {
                         return $value;
                     }
+
                     return '`'.$value.'`';
                 });
-
 
                 if ($values->count() > 1) {
                     $filters->push($field.':['.collect($values)->join(',').']');
@@ -180,7 +178,7 @@ class TypesenseEngine extends AbstractEngine
 
             $queryBy = $options['query_by'];
 
-            if (!$this->query) {
+            if (! $this->query) {
                 $queryBy = str_replace('embedding,', '', $queryBy);
             }
 
@@ -197,7 +195,7 @@ class TypesenseEngine extends AbstractEngine
             ];
 
             if ($this->query) {
-                $params['vector_query'] = "embedding:([], k: 200)";
+                $params['vector_query'] = 'embedding:([], k: 200)';
             }
 
             if ($filters->count()) {
@@ -214,11 +212,11 @@ class TypesenseEngine extends AbstractEngine
     {
         $typesense = app(EngineManager::class)->engine('typesense');
         $index = (new Product)->searchableAs();
+
         return $typesense->getCollections()[$index]->documents->delete([
             'filter_by' => 'id: ['.$ids->join(',').']',
         ]);
     }
-
 
     protected function getFieldConfig(): array
     {
