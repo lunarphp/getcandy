@@ -8,22 +8,9 @@ use Typesense\Documents;
 
 class DatabaseEngine extends AbstractEngine
 {
-    public function __construct()
-    {
-        $this->searchBuilder = function (Documents $documents, string $query, array $options) {
-            return $documents->search([
-                'q' => $query,
-                ...$options,
-                'facet_by' => 'colour,size',
-                'per_page' => 2,
-                //                'page' => ,
-            ]);
-        };
-    }
-
     public function get(): mixed
     {
-        $results = get_search_builder($this->modelType, $this->query, forceQuery: true)
+        $results = get_search_builder($this->modelType, $this->query)
             ->paginate();
 
         $documents = collect($results->items())->map(fn ($hit) => SearchHit::from([
