@@ -17,9 +17,9 @@ test('can validate available stock', function (int $stock, int $backorder, int $
     ]);
 
     $purchasable = \Lunar\Models\ProductVariant::factory()->create([
-        $stock,
-        $backorder,
-        $purchasable,
+        'stock' => $stock,
+        'backorder' => $backorder,
+        'purchasable' => $purchasable,
     ]);
 
     $validator = (new \Lunar\Validation\CartLine\CartLineStock)->using(
@@ -86,4 +86,4 @@ test('can validate available stock', function (int $stock, int $backorder, int $
         'in_stock_or_backorder',
         true,
     ],
-])->group('blueberry');
+]);
