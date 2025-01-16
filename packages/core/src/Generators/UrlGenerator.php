@@ -40,16 +40,14 @@ class UrlGenerator
         $this->model = $model;
 
         if (! $model->urls->count()) {
-            if ($model->attribute_data) {
+            if ($name = $model->name) {
+                $this->createUrl($name);
+            } elseif ($model->attribute_data) {
                 $this->createUrl(
                     $model->attr('name')
                 );
 
                 return;
-            }
-
-            if ($name = $model->name) {
-                $this->createUrl($name);
             }
         }
     }
@@ -97,7 +95,7 @@ class UrlGenerator
 
         $suffix = $this->getSuffix($slug, $separator, $slugs);
 
-        return $slug.$separator.$suffix;
+        return $slug . $separator . $suffix;
     }
 
     /**
@@ -111,7 +109,7 @@ class UrlGenerator
     {
         return Url::where(function ($query) use ($slug, $separator) {
             $query->where('slug', $slug)
-                ->orWhere('slug', 'like', $slug.$separator.'%');
+                ->orWhere('slug', 'like', $slug . $separator . '%');
         })->whereLanguageId($this->defaultLanguage->id)
             ->select(['element_id', 'slug'])
             ->get()
@@ -127,7 +125,7 @@ class UrlGenerator
      */
     private function getSuffix($slug, $separator, $slugs)
     {
-        $len = strlen($slug.$separator);
+        $len = strlen($slug . $separator);
 
         if ($slugs->search($slug) === $this->model->getKey()) {
             $suffix = explode($separator, $slug);
