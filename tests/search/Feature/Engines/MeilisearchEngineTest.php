@@ -50,7 +50,7 @@ it('can search complete results', function () {
             [
                 'id' => '123',
                 'name' => 'Foo Bar',
-            ]
+            ],
         ],
         'facetDistribution' => [
             'brand' => [

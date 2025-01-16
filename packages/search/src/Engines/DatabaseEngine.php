@@ -4,7 +4,6 @@ namespace Lunar\Search\Engines;
 
 use Lunar\Search\Data\SearchHit;
 use Lunar\Search\Data\SearchResults;
-use Typesense\Documents;
 
 class DatabaseEngine extends AbstractEngine
 {
