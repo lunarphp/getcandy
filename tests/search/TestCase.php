@@ -4,16 +4,13 @@ namespace Lunar\Tests\Search;
 
 use Cartalyst\Converter\Laravel\ConverterServiceProvider;
 use Illuminate\Support\Facades\Config;
-use Kalnoy\Nestedset\NestedSetServiceProvider;
-use Livewire\LivewireServiceProvider;
+use Laravel\Scout\ScoutServiceProvider;
 use Lunar\LunarServiceProvider;
+use Lunar\Search\SearchServiceProvider;
 use Lunar\Stripe\Facades\Stripe;
-use Lunar\Stripe\StripePaymentsServiceProvider;
 use Lunar\Tests\Stubs\User;
 use Spatie\Activitylog\ActivitylogServiceProvider;
-use Spatie\LaravelBlink\BlinkServiceProvider;
 use Spatie\LaravelData\LaravelDataServiceProvider;
-use Spatie\MediaLibrary\MediaLibraryServiceProvider;
 
 class TestCase extends \Orchestra\Testbench\TestCase
 {
@@ -36,7 +33,9 @@ class TestCase extends \Orchestra\Testbench\TestCase
             LunarServiceProvider::class,
             ConverterServiceProvider::class,
             ActivitylogServiceProvider::class,
-            LaravelDataServiceProvider::class
+            LaravelDataServiceProvider::class,
+            SearchServiceProvider::class,
+            ScoutServiceProvider::class,
         ];
     }
 

@@ -104,7 +104,7 @@ class MeilisearchEngine extends AbstractEngine
 
     public function mapFacets(array $results): Collection
     {
-        $facets = collect($results['facetDistribution'])->map(
+        $facets = collect($results['facetDistribution'] ?? [])->map(
             fn ($values, $field) => SearchFacet::from([
                 'label' => $this->getFacetConfig($field)['label'] ?? $field,
                 'field' => $field,

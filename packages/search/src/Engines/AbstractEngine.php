@@ -13,7 +13,7 @@ abstract class AbstractEngine
 
     protected array $queryExtenders = [];
 
-    protected ?string $query = null;
+    protected string $query = '';
 
     protected array $filters = [];
 
