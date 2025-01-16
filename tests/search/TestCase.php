@@ -12,6 +12,7 @@ use Lunar\Stripe\StripePaymentsServiceProvider;
 use Lunar\Tests\Stubs\User;
 use Spatie\Activitylog\ActivitylogServiceProvider;
 use Spatie\LaravelBlink\BlinkServiceProvider;
+use Spatie\LaravelData\LaravelDataServiceProvider;
 use Spatie\MediaLibrary\MediaLibraryServiceProvider;
 
 class TestCase extends \Orchestra\Testbench\TestCase
@@ -33,13 +34,9 @@ class TestCase extends \Orchestra\Testbench\TestCase
     {
         return [
             LunarServiceProvider::class,
-            BlinkServiceProvider::class,
-            StripePaymentsServiceProvider::class,
-            LivewireServiceProvider::class,
-            MediaLibraryServiceProvider::class,
-            ActivitylogServiceProvider::class,
             ConverterServiceProvider::class,
-            NestedSetServiceProvider::class,
+            ActivitylogServiceProvider::class,
+            LaravelDataServiceProvider::class
         ];
     }
 

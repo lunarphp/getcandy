@@ -98,6 +98,11 @@ abstract class AbstractEngine
         return $this;
     }
 
+    public function getSort(): ?string
+    {
+        return $this->sort;
+    }
+
     public function sortRaw(string $sort): self
     {
         $this->sortRaw = $sort;
@@ -125,13 +130,13 @@ abstract class AbstractEngine
     protected function getFacetConfig(?string $field = null): ?array
     {
         if (! $field) {
-            return config('lunar.search.facets.'.$this->modelType);
+            return config('lunar.search.facets.'.$this->modelType, []);
         }
 
         return config('lunar.search.facets.'.$this->modelType, [])[$field] ?? [];
     }
 
-    protected function getSearchQueries(): Collection
+    public function getSearchQueries(): Collection
     {
         $facets = $this->getFacetConfig();
 
