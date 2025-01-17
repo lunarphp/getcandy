@@ -5,7 +5,6 @@ namespace Lunar\Admin\Filament\Resources;
 use Filament\Forms;
 use Filament\Forms\Components\Component;
 use Filament\Forms\Form;
-use Filament\Pages\Page;
 use Filament\Pages\SubNavigationPosition;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Tables;
@@ -377,13 +376,13 @@ class DiscountResource extends BaseResource
         ];
     }
 
-    public static function getRecordSubNavigation(Page $page): array
+    public static function getDefaultSubNavigation(): array
     {
-        return $page->generateNavigationItems([
+        return [
             Pages\EditDiscount::class,
             Pages\ManageDiscountAvailability::class,
             Pages\ManageDiscountLimitations::class,
-        ]);
+        ];
     }
 
     protected static function getDefaultRelations(): array
