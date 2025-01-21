@@ -120,9 +120,10 @@ class CartSessionManager implements CartSessionInterface
     }
 
     /**
-     * Fetches a cart and optionally creates one if it doesn't exist.
+     * Retrieve the ID for the current session cart.
+     * Returns null if one doesn't exist.
      */
-    private function fetchOrCreate(bool $create = false, bool $estimateShipping = false, bool $calculate = true): ?Cart
+    public function getCartId(): ?int
     {
         $cartId = $this->sessionManager->get(
             $this->getSessionKey()
@@ -131,6 +132,16 @@ class CartSessionManager implements CartSessionInterface
         if (! $cartId && $user = $this->authManager->user()) {
             $cartId = $user->carts()->active()->first()?->id;
         }
+
+        return $cartId;
+    }
+
+    /**
+     * Fetches a cart and optionally creates one if it doesn't exist.
+     */
+    private function fetchOrCreate(bool $create = false, bool $estimateShipping = false, bool $calculate = true): ?Cart
+    {
+        $cartId = $this->getCartId();
 
         if (! $cartId) {
             return $create ? $this->cart = $this->createNewCart() : null;
