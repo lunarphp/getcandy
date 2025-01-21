@@ -7,11 +7,14 @@ use Illuminate\Contracts\Auth\Authenticatable;
 use Illuminate\Session\SessionManager;
 use Illuminate\Support\Collection;
 use Lunar\Base\CartSessionInterface;
+use Lunar\Facades\ModelManifest;
 use Lunar\Facades\ShippingManifest;
 use Lunar\Models\Cart;
+use Lunar\Models\CartLine;
 use Lunar\Models\Channel;
 use Lunar\Models\Currency;
 use Lunar\Models\Order;
+use Lunar\Models\ProductVariant;
 
 class CartSessionManager implements CartSessionInterface
 {
@@ -81,7 +84,6 @@ class CartSessionManager implements CartSessionInterface
         $this->sessionManager->forget(
             $this->getSessionKey()
         );
-
     }
 
     /**
@@ -134,6 +136,21 @@ class CartSessionManager implements CartSessionInterface
         }
 
         return $cartId;
+    }
+
+    /**
+     * Retrieve the total number of items in the cart.
+     */
+    public function getCartQuantity(): int
+    {
+        if (! $cartId = $this->getCartId()) {
+            return 0;
+        }
+
+        return CartLine::query()
+            ->where('cart_id', $cartId)
+            ->where('purchasable_type', ModelManifest::getMorphMapKey(ProductVariant::class))
+            ->sum('quantity') ?? 0;
     }
 
     /**
