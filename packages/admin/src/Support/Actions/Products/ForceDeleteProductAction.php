@@ -20,23 +20,15 @@ class ForceDeleteProductAction extends ForceDeleteAction
 
                     $record->customerGroups()->detach();
 
-                    $record->variants()->each(function (Model $variant) {
-                        $variant->values()->detach();
-
-                        $variant->prices()->delete();
-                    });
-
                     $record->urls()->delete();
 
-                    $record->variants()->delete();
+                    $record->variants()->get()->each->forceDelete();
 
                     $record->productOptions()->detach();
 
                     $record->associations()->delete();
 
                     $record->channels()->detach();
-
-                    $record->clearMediaCollection('images');
 
                     return $record->forceDelete();
                 });
