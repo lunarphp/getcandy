@@ -36,16 +36,17 @@ class StorefrontSessionManager implements StorefrontSessionInterface
 
     /**
      * Initialise the manager
-     *
-     * @param protected SessionManager
      */
     public function __construct(
         protected SessionManager $sessionManager,
-        protected AuthManager $authManager
+        protected AuthManager $authManager,
+        ?\Lunar\Models\Contracts\Channel $channel = null
     ) {
         if (! $this->customerGroups) {
             $this->customerGroups = collect();
         }
+
+        $this->channel = $channel;
 
         $this->initChannel();
         $this->initCustomerGroups();
