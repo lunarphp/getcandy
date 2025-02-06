@@ -74,7 +74,7 @@ class ManageVariantMedia extends BaseEditRecord
         return $record;
     }
 
-    public function form(Form $form): Form
+    public function getDefaultForm(Form $form): Form
     {
         return $form->schema([
             Section::make()->schema([
