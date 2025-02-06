@@ -1,6 +1,7 @@
 <?php
 
-uses(\Lunar\Tests\Shipping\TestCase::class);
+uses(\Lunar\Tests\Shipping\TestCase::class)
+    ->group('shipping', 'shipping-zone-postcode');
 
 use Lunar\Shipping\Models\ShippingZone;
 use Lunar\Shipping\Models\ShippingZonePostcode;

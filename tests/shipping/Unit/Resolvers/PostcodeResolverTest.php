@@ -1,6 +1,7 @@
 <?php
 
-uses(\Lunar\Tests\Shipping\TestCase::class);
+uses(\Lunar\Tests\Shipping\TestCase::class)
+    ->group('shipping', 'shipping-postcode');
 
 use Lunar\Shipping\Resolvers\PostcodeResolver;
 

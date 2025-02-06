@@ -6,7 +6,8 @@ use Lunar\Models\TaxClass;
 use Lunar\Shipping\Models\ShippingMethod;
 use Lunar\Shipping\Models\ShippingZone;
 
-uses(\Lunar\Tests\Shipping\TestCase::class);
+uses(\Lunar\Tests\Shipping\TestCase::class)
+    ->group('shipping', 'shipping-modifier');
 uses(\Illuminate\Foundation\Testing\RefreshDatabase::class);
 uses(\Lunar\Tests\Shipping\TestUtils::class);
 
@@ -76,4 +77,4 @@ test('can set correct shipping options', function () {
     $option = $cart->refresh()->getShippingOption();
 
     expect($option->price->value)->toBe(0);
-})->group('shipping-modifier');
+});
