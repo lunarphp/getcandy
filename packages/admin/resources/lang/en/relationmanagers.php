@@ -89,6 +89,9 @@ return [
         'title' => 'Media',
         'title_plural' => 'Media',
         'actions' => [
+            'attach' => [
+                'label' => 'Attach Media',
+            ],
             'create' => [
                 'label' => 'Create Media',
             ],
@@ -121,6 +124,7 @@ return [
                 'label' => 'Primary',
             ],
         ],
+        'variant_description' => 'Attach product images to this variant',
     ],
     'urls' => [
         'title' => 'URL',
