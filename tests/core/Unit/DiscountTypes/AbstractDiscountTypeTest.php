@@ -2,8 +2,6 @@
 
 uses(\Lunar\Tests\Core\TestCase::class);
 
-use Lunar\DiscountTypes\AbstractDiscountType;
-use Lunar\DiscountTypes\AmountOff;
 use Lunar\Models\Cart;
 use Lunar\Models\Channel;
 use Lunar\Models\Currency;
@@ -34,38 +32,16 @@ test('will handle customer limitation', function () {
 
     $currency = Currency::getDefault();
 
-    $discountType = new class extends AbstractDiscountType
-    {
-        public function getName(): string
-        {
-            return 'Test Discount';
-        }
-
-        public function apply(Cart $cart): Cart
-        {
-            if (! $this->checkDiscountConditions($cart)) {
-                return $cart;
-            }
-
-            $subTotal = $cart->subTotal;
-            $subTotal->value = $subTotal->value - 100;
-            $cart->subTotal = $subTotal;
-
-            return $cart;
-        }
-    };
-
     $customer = \Lunar\Models\Customer::factory()->create([]);
 
     $cart = Cart::factory()->create([
         'channel_id' => $channel->id,
         'currency_id' => $currency->id,
         'coupon_code' => '10OFF',
-        'customer_id' => $customer->id,
     ]);
 
     $discountModel = Discount::factory()->create([
-        'type' => AmountOff::class,
+        'type' => \Lunar\Tests\Core\Stubs\TestAbstractDiscount::class,
         'name' => 'Test Coupon',
         'coupon' => '10OFF',
         'data' => [
@@ -96,15 +72,17 @@ test('will handle customer limitation', function () {
         'quantity' => 1,
     ]);
 
-    $cart->calculate();
-
-    $cart = $discountType->with($discountModel)->apply($cart);
-
-    expect($cart->subTotal->value)->toBe(1000);
-
     $discountModel->customers()->attach($customer->id);
 
-    $cart = $discountType->with($discountModel->refresh())->apply($cart);
+    $cart->calculate();
 
-    expect($cart->subTotal->value)->toBe(900);
-});
+    expect($cart->subTotalDiscounted->value)->toBe(1000);
+
+    $cart->update([
+        'customer_id' => $customer->id,
+    ]);
+
+    $cart->refresh()->calculate();
+
+    expect($cart->subTotalDiscounted->value)->toBe(900);
+})->group('waaaa');
