@@ -97,7 +97,7 @@ class ManageVariantMedia extends BaseManageRelatedRecords
                             ->required(),
 
                         Forms\Components\Toggle::make('primary')
-                            ->label(__('lunarpanel::relationmanagers.medias.table.primary.label'))
+                            ->label(__('lunarpanel::relationmanagers.medias.table.primary.label')),
                     ])
                     ->using(function (array $data): Model {
                         $record = $this->getOwnerRecord();
