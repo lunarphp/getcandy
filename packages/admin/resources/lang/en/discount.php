@@ -154,12 +154,12 @@ return [
             'actions' => [
                 'attach' => [
                     'label' => 'Attach Customer',
-                ]
+                ],
             ],
             'table' => [
                 'name' => [
                     'label' => 'Name',
-                ]
+                ],
             ],
         ],
         'brands' => [

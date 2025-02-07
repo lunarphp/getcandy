@@ -2,7 +2,6 @@
 
 namespace Lunar\Admin\Filament\Resources\DiscountResource\RelationManagers;
 
-use Filament\Forms\Components\Select;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Lunar\Admin\Support\RelationManagers\BaseRelationManager;
@@ -39,7 +38,7 @@ class CustomerLimitationRelationManager extends BaseRelationManager
                 Tables\Columns\TextColumn::make('full_name')
                     ->label(
                         __('lunarpanel::discount.relationmanagers.customers.table.name.label')
-                    )
+                    ),
             ])->actions([
                 Tables\Actions\DetachAction::make(),
             ]);
