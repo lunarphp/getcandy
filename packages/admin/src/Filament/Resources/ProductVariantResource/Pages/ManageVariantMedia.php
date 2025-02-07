@@ -129,8 +129,7 @@ class ManageVariantMedia extends BaseManageRelatedRecords
             ])
             ->reorderRecordsTriggerAction(
                 fn (Action $action, bool $isReordering) => $action
-                    ->button()
-                    ->label($isReordering ? 'Disable reordering' : 'Enable reordering'),
+                    ->button(),
             )
             ->reorderable('position', true);
     }
