@@ -22,11 +22,10 @@ class Attributes extends Forms\Components\Group
 
         if (blank($this->childComponents)) {
             $this->schema(function (\Filament\Forms\Get $get, Livewire $livewire, ?Model $record) {
-                $modelClass = $livewire::getResource()::getModel();
 
                 $productTypeId = null;
 
-                $morphMap = $modelClass::morphName();
+                $morphMap = $record ? $record::morphName() : $livewire::getResource()::getModel()::morphName();
 
                 $attributeQuery = Attribute::where('attribute_type', $morphMap);
 
