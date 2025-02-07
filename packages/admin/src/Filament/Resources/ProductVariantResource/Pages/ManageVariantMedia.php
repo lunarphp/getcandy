@@ -81,6 +81,7 @@ class ManageVariantMedia extends BaseManageRelatedRecords
             ->headerActions([
                 CreateAction::make('attach')
                     ->label(__('lunarpanel::relationmanagers.medias.actions.attach.label'))
+                    ->modalHeading(__('lunarpanel::relationmanagers.medias.actions.attach.label'))
                     ->form([
                         Forms\Components\Select::make('media_id')
                             ->label(__('lunarpanel::relationmanagers.medias.table.file.label'))
