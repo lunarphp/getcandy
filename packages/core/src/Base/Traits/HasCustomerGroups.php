@@ -29,13 +29,15 @@ trait HasCustomerGroups
         static::created(function (Model $model) {
             $model->customerGroups()->sync(
                 CustomerGroup::get()->mapWithKeys(
-                    fn ($customerGroup): array => [$customerGroup->id => [
-                        'enabled' => $customerGroup->default,
-                        'starts_at' => now(),
-                        'ends_at' => null,
-                        'visible' => $customerGroup->default,
-                        ...static::getExtraCustomerGroupPivotValues($customerGroup),
-                    ]]
+                    fn ($customerGroup): array => [
+                        $customerGroup->id => [
+                            'enabled' => $customerGroup->default,
+                            'starts_at' => now(),
+                            'ends_at' => null,
+                            'visible' => $customerGroup->default,
+                            ...static::getExtraCustomerGroupPivotValues($customerGroup),
+                        ],
+                    ]
                 )
             );
         });
@@ -94,13 +96,20 @@ trait HasCustomerGroups
      * @param  Collection  $customerGroups
      * @return Builder
      */
-    public function applyCustomerGroupScope(Builder $query, Collection $groupIds, DateTime $startsAt, DateTime $endsAt)
-    {
-        return $query->whereHas('customerGroups', function ($relation) use ($groupIds, $startsAt, $endsAt) {
+    public function applyCustomerGroupScope(
+        Builder $query,
+        Collection $groupIds,
+        DateTime $startsAt,
+        DateTime $endsAt,
+        bool $onlyVisible
+    ) {
+        return $query->whereHas('customerGroups', function ($relation) use ($groupIds, $startsAt, $endsAt, $onlyVisible) {
             $relation->whereIn(
                 $this->customerGroups()->getTable().'.customer_group_id',
                 $groupIds
-            )->where(function ($query) use ($startsAt) {
+            )->when($onlyVisible, function ($query) {
+                $query->where('visible', true);
+            })->where(function ($query) use ($startsAt) {
                 $query->whereNull('starts_at')
                     ->orWhere('starts_at', '<=', $startsAt);
             })->where(function ($query) use ($endsAt) {
@@ -120,8 +129,13 @@ trait HasCustomerGroups
      * @param  CustomerGroup|string  $customerGroup
      * @return Builder
      */
-    public function scopeCustomerGroup($query, CustomerGroup|iterable|null $customerGroup = null, ?DateTime $startsAt = null, ?DateTime $endsAt = null)
-    {
+    public function scopeCustomerGroup(
+        $query,
+        CustomerGroup|iterable|null $customerGroup = null,
+        ?DateTime $startsAt = null,
+        ?DateTime $endsAt = null,
+        ?bool $onlyVisible = false
+    ) {
         if (blank($customerGroup)) {
             return $query;
         }
@@ -148,6 +162,6 @@ trait HasCustomerGroups
             $endsAt = now()->addSecond();
         }
 
-        return $this->applyCustomerGroupScope($query, $groupIds, $startsAt, $endsAt);
+        return $this->applyCustomerGroupScope($query, $groupIds, $startsAt, $endsAt, $onlyVisible);
     }
 }

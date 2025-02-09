@@ -186,6 +186,33 @@ test('can fetch authenticated users cart and set in session', function () {
 
 });
 
+test('can get cart quantity', function () {
+    Currency::factory()->create([
+        'default' => true,
+    ]);
+
+    Channel::factory()->create([
+        'default' => true,
+    ]);
+
+    // create a purchasable product
+    $product = \Lunar\Models\ProductVariant::factory()
+        ->has(\Lunar\Models\Price::factory())
+        ->create();
+    $product->purchasable = 'always';
+
+    Config::set('lunar.cart_session.auto_create', true);
+
+    // add the item to our cart 4 times
+    $cart = CartSession::current();
+    $cart->add($product, 4);
+
+    // and check the quantity matches
+    $quantity = app(CartSessionManager::class)->getCartQuantity();
+
+    expect($quantity)->toEqual(4);
+});
+
 test('can forget a cart and soft delete it', function () {
     Currency::factory()->create([
         'default' => true,
