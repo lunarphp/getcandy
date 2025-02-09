@@ -96,6 +96,20 @@ class OrderItemsTable extends TableComponent
 
                             return $states;
                         }),
+
+                    KeyValue::make('meta_data')
+                        ->getStateUsing(function ($record) {
+
+                            $states = [];
+
+                            if ($record->meta) {
+                                foreach ($record->meta as $key => $value) {
+                                    $states[$key] = $value;
+                                }
+                            }
+
+                            return $states;
+                        }),
                 ]),
             ])
                 ->collapsed()
