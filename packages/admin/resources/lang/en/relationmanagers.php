@@ -95,6 +95,9 @@ return [
             'create' => [
                 'label' => 'Create Media',
             ],
+            'detach' => [
+                'label' => 'Detach',
+            ],
             'view' => [
                 'label' => 'View',
             ],

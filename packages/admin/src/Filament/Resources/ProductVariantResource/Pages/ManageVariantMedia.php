@@ -46,6 +46,18 @@ class ManageVariantMedia extends BaseManageRelatedRecords
         ];
     }
 
+    public function getBreadcrumbs(): array
+    {
+        return [
+            ...ProductVariantResource::getBaseBreadcrumbs(
+                $this->getRecord()
+            ),
+            ProductVariantResource::getUrl('media', [
+                'record' => $this->getRecord(),
+            ]) => $this->getTitle(),
+        ];
+    }
+
     public function table(Table $table): Table
     {
         return $table
@@ -60,7 +72,7 @@ class ManageVariantMedia extends BaseManageRelatedRecords
             ->columns([
                 Tables\Columns\ImageColumn::make('image')
                     ->state(function (Media $record): string {
-                        return $record->hasGeneratedConversion('small') ? $record->getUrl('small') : '';
+                        return $record->hasGeneratedConversion('small') ? $record->getUrl('small') : $record->getUrl();
                     })
                     ->label(__('lunarpanel::relationmanagers.medias.table.image.label')),
                 Tables\Columns\TextColumn::make('file_name')
@@ -125,6 +137,13 @@ class ManageVariantMedia extends BaseManageRelatedRecords
                         ]);
 
                         return $record;
+                    }),
+            ])
+            ->actions([
+                Action::make('detach')
+                    ->label(__('lunarpanel::relationmanagers.medias.actions.detach.label'))
+                    ->action(function($record) {
+                        $this->getOwnerRecord()->images()->detach($record);
                     }),
             ])
             ->reorderRecordsTriggerAction(
