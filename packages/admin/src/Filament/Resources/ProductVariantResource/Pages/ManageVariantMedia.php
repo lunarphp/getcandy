@@ -142,7 +142,7 @@ class ManageVariantMedia extends BaseManageRelatedRecords
             ->actions([
                 Action::make('detach')
                     ->label(__('lunarpanel::relationmanagers.medias.actions.detach.label'))
-                    ->action(function($record) {
+                    ->action(function ($record) {
                         $this->getOwnerRecord()->images()->detach($record);
                     }),
             ])
