@@ -2,7 +2,10 @@
 
 namespace Lunar\Admin\Filament\Resources\ProductVariantResource\Pages;
 
+use Awcodes\Shout\Components\Shout;
 use Filament\Forms;
+use Filament\Forms\Components\Section;
+use Filament\Forms\Get;
 use Filament\Support\Facades\FilamentIcon;
 use Filament\Tables;
 use Filament\Tables\Actions\Action;
@@ -95,21 +98,39 @@ class ManageVariantMedia extends BaseManageRelatedRecords
                     ->label(__('lunarpanel::relationmanagers.medias.actions.attach.label'))
                     ->modalHeading(__('lunarpanel::relationmanagers.medias.actions.attach.label'))
                     ->form([
-                        Forms\Components\Select::make('media_id')
-                            ->label(__('lunarpanel::relationmanagers.medias.table.file.label'))
-                            ->options(function () {
-                                return $this->getRecord()
-                                    ->product
-                                    ->media
-                                    ->filter(fn ($media) => ! $this->getRecord()->images->pluck('id')->contains($media->id))
-                                    ->mapWithKeys(fn ($media) => [
-                                        $media->getKey() => Arr::get($media->data, 'custom_properties.name', $media->name),
-                                    ]);
-                            })
-                            ->required(),
+                        Section::make()->schema([
+                            Shout::make('no_selection')->content(
+                                __('lunarpanel::productvariant.pages.media.form.no_selection.label')
+                            )->visible(
+                                fn (Get $get) => ! $get('images') && $this->getRecord()->product->media()->count()
+                            ),
+                            Shout::make('no_media_available')->content(
+                                __('lunarpanel::productvariant.pages.media.form.no_media_available.label')
+                            )->visible(
+                                fn (Get $get) => ! $this->getRecord()->product->media()->count()
+                            ),
+                            Forms\Components\Select::make('media_id')
+                                ->label(__('lunarpanel::relationmanagers.medias.table.file.label'))
+                                ->options(function () {
+                                    return $this->getRecord()
+                                        ->product
+                                        ->media
+                                        ->filter(fn ($media) => ! $this->getRecord()->images->pluck('id')->contains($media->id))
+                                        ->mapWithKeys(fn ($media) => [
+                                            $media->getKey() => Arr::get($media->data, 'custom_properties.name', $media->name),
+                                        ]);
+                                })
+                                ->visible(
+                                    fn () => $this->getRecord()->product->media()->count()
+                                )
+                                ->required(),
 
-                        Forms\Components\Toggle::make('primary')
-                            ->label(__('lunarpanel::relationmanagers.medias.table.primary.label')),
+                            Forms\Components\Toggle::make('primary')
+                                ->label(__('lunarpanel::relationmanagers.medias.table.primary.label'))
+                                ->visible(
+                                    fn () => $this->getRecord()->product->media()->count()
+                                ),
+                        ]),
                     ])
                     ->using(function (array $data): Model {
                         $record = $this->getOwnerRecord();
