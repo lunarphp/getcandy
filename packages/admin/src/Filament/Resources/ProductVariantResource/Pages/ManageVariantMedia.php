@@ -67,14 +67,16 @@ class ManageVariantMedia extends BaseEditRecord
 
     protected function handleRecordUpdate(Model $record, array $data): Model
     {
+        $data = $this->callLunarHook('beforeUpdate', $data, $record);
+
         $record->images()->sync([
             $data['images'] => ['primary' => true],
         ]);
 
-        return $record;
+        return $this->callLunarHook('afterUpdate', $record, $data);
     }
 
-    public function form(Form $form): Form
+    public function getDefaultForm(Form $form): Form
     {
         return $form->schema([
             Section::make()->schema([
