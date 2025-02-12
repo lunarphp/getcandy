@@ -86,6 +86,7 @@ trait HasCustomerGroups
                 return false;
             }
         }
+
         return true;
     }
 
