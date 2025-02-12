@@ -138,6 +138,7 @@ trait DisplaysOrderAddresses
                         if ($address?->id ?? false) {
                             return collect([
                                 'company_name' => $address->company_name,
+                                'vat_number' => $address->meta?->vatNumber,
                                 'fullName' => $address->fullName,
                                 'line_one' => $address->line_one,
                                 'line_two' => $address->line_two,
