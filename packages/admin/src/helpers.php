@@ -91,7 +91,7 @@ if (! function_exists('get_search_builder')) {
             /** @var Connection $databaseConnection */
             $databaseConnection = $query->getConnection();
 
-            $search = generate_search_term_expression($search, true, $databaseConnection);
+            $search = generate_search_term_expression($search, false, $databaseConnection);
 
             foreach (explode(' ', $search) as $searchWord) {
                 $query->where(function (Builder $query) use ($model, $searchWord) {
